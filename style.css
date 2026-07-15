@@ -1501,6 +1501,37 @@ footer {
     .features-img {
         min-height: 300px;
     }
+    
+    .filters {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+    .filters .filter-btn {
+        width: 100%;
+        padding: 10px 5px;
+        font-size: 0.9rem;
+    }
+    .filters .filter-btn[data-filter="all"] {
+        grid-column: 1 / -1;
+    }
+
+    .features-grid.stacked .feature-card {
+        padding: 15px;
+        gap: 15px;
+    }
+    .features-grid.stacked .feature-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+    }
+    .features-grid.stacked h3 {
+        font-size: 1.1rem;
+        margin-top: 0;
+    }
+    .features-grid.stacked p {
+        font-size: 0.9rem;
+    }
 }
 
 
