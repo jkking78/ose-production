@@ -1656,7 +1656,7 @@ footer {
 /* --- Favorites Styles --- */
 .floating-favorites {
     position: fixed;
-    bottom: 110px; /* Stacked right above the floating cart button */
+    bottom: 110px; /* Stacked directly above the WhatsApp service button */
     right: 30px;
     background: #fafafa;
     color: var(--magenta);
@@ -1672,6 +1672,10 @@ footer {
     cursor: pointer;
     z-index: 9999;
     transition: transform 0.3s, background 0.3s, color 0.3s;
+}
+
+.floating-cart {
+    display: none !important;
 }
 
 .floating-favorites:hover {
@@ -1704,7 +1708,7 @@ footer {
     height: 100vh;
     background: white;
     box-shadow: -10px 0 30px rgba(0,0,0,0.15);
-    z-index: 10000;
+    z-index: 10002; /* Raised above overlay (10001) to fix the blur issue */
     transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
     display: flex;
     flex-direction: column;
@@ -1712,6 +1716,31 @@ footer {
 
 .favorites-sidebar.active {
     right: 0;
+}
+
+/* --- Floating WhatsApp Customer Service --- */
+.floating-whatsapp-service {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    background: #25D366;
+    color: white !important;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+    z-index: 9999;
+    cursor: pointer;
+    transition: transform 0.3s, background 0.3s;
+}
+
+.floating-whatsapp-service:hover {
+    transform: scale(1.1);
+    background: #128C7E;
 }
 
 @media (max-width: 480px) {
