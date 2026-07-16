@@ -853,6 +853,16 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // Logo click confirmation
+    document.querySelectorAll('.navbar .logo').forEach(logo => {
+        logo.style.cursor = 'pointer';
+        logo.addEventListener('click', () => {
+            if (confirm("Voulez-vous retourner à la page d'accueil ?")) {
+                window.location.href = 'index.html';
+            }
+        });
+    });
+
 });
 
 
