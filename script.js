@@ -333,7 +333,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     </div>` : ''}
                 </div>
                 <div class="gallery-info" style="text-align: center; margin-top: 10px;">
-                    <button class="btn-primary" style="width: 100%; padding: 10px; font-size: 0.9rem;">Sélectionner</button>
+                    <button class="btn-primary" style="width: 100%; padding: 10px; font-size: 0.9rem;">Voir</button>
                 </div>
             `;
             
