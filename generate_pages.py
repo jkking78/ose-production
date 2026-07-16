@@ -61,11 +61,12 @@ def generate_page(cat, index):
                     
                     <div class="item-price" style="font-size: 1.4rem; font-weight: 700; color: #d00000;">{cat['price']}</div>
                 </div>
-                <div style="margin-left: 15px; margin-top: 55px;">
+                <div style="margin-left: 15px; margin-top: 55px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
                     <button class="btn-primary btn-commander" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 30px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
                         <i class="ph ph-shopping-bag" style="font-size: 1.2rem;"></i>
                         Commander
                     </button>
+                    <div class="party-emoji" style="font-size: 1.8rem; cursor: pointer; user-select: none; transition: transform 0.2s;">🎉</div>
                 </div>
             </div>
             

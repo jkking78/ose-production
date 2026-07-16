@@ -130,7 +130,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function openLightbox(imagesStr) {
         if (!imagesStr) return;
-        currentImages = imagesStr.split(',');
+        currentImages = imagesStr.replace(/\|/g, ',').split(',');
         currentIndex = 0;
         updateLightbox();
         lightbox.classList.add('active');
@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (btn && img) {
             const imagesAttr = btn.getAttribute('data-images');
             if (imagesAttr) {
-                const images = imagesAttr.split(',');
+                const images = imagesAttr.replace(/\|/g, ',').split(',');
                 if (images.length > 1) {
                     let thumbIndex = 0;
                     // Preload images
@@ -1099,6 +1099,51 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
+    // --- Party Emoji Confetti Celebration ---
+    const emojiClickCounts = new Map();
+
+    document.addEventListener('click', (e) => {
+        const emoji = e.target.closest('.party-emoji');
+        if (!emoji) return;
+
+        if (typeof confetti !== 'function') return;
+
+        let clicks = emojiClickCounts.get(emoji) || 0;
+
+        if (clicks < 2) {
+            confetti({
+                particleCount: 60,
+                spread: 50,
+                origin: { y: 0.85 },
+                zIndex: 99999
+            });
+
+            emojiClickCounts.set(emoji, clicks + 1);
+
+            // Pop scale animation
+            emoji.style.transform = 'scale(1.4)';
+            setTimeout(() => {
+                emoji.style.transform = '';
+            }, 200);
+        } else {
+            // Shake slightly to indicate locked state
+            emoji.style.transform = 'scale(0.9) rotate(-10deg)';
+            setTimeout(() => {
+                emoji.style.transform = '';
+            }, 150);
+        }
+    });
+
+    // Animate and reset every 5 seconds
+    setInterval(() => {
+        document.querySelectorAll('.party-emoji').forEach(emoji => {
+            emojiClickCounts.set(emoji, 0); // reset limit
+            emoji.classList.remove('shake');
+            void emoji.offsetWidth; // trigger reflow
+            emoji.classList.add('shake');
+        });
+    }, 5000);
 
     // Logo click confirmation
     document.querySelectorAll('.navbar .logo').forEach(logo => {

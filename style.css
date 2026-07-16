@@ -1775,3 +1775,14 @@ footer {
         right: -100%;
     }
 }
+
+/* --- Party Emoji Animation --- */
+@keyframes shake-emoji {
+    0%, 100% { transform: rotate(0deg) scale(1); }
+    10%, 30%, 50%, 70%, 90% { transform: rotate(-10deg) scale(1.15); }
+    20%, 40%, 60%, 80% { transform: rotate(10deg) scale(1.15); }
+}
+
+.party-emoji.shake {
+    animation: shake-emoji 0.8s ease-in-out;
+}
