@@ -472,7 +472,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 
     // --- Shopping Cart Logic (localStorage) ---
-    const whatsappNumber = "2250000000000"; // Remplacez par votre vrai numéro (indicatif + numéro)
+    const whatsappNumber = "2250501696060"; // Numéro de l'entreprise
     
     const floatingCart = document.getElementById('floating-cart');
     const cartSidebar = document.getElementById('cart-sidebar');
@@ -630,26 +630,30 @@ document.addEventListener('DOMContentLoaded', () => {
         btnCheckoutWhatsapp.addEventListener('click', () => {
             if(cart.length === 0) return;
             
-            let message = "Bonjour OSE Production ! Je souhaite passer une commande :%0A%0A";
+            let message = "Bonjour OSE Production ! Je souhaite passer une commande :\n\n";
             
             cart.forEach((item, index) => {
-                message += `*--- ARTICLE ${index + 1} ---*%0A`;
-                message += `Catégorie: ${item.category}%0A`;
-                message += `Modèle: ${item.modelName}%0A`;
-                message += `Quantité: ${item.quantity}%0A`;
-                message += `Prix Base: ${item.price}%0A%0A`;
+                message += `*--- ARTICLE ${index + 1} ---*\n`;
+                message += `Catégorie: ${item.category}\n`;
+                message += `Modèle: ${item.modelName}\n`;
+                // If it's a full URL, it will be clickable in WhatsApp
+                if (item.image) {
+                    message += `Image: ${item.image}\n`;
+                }
+                message += `Quantité: ${item.quantity}\n`;
+                message += `Prix Base: ${item.price}\n\n`;
                 
-                message += `*Détails des mesures :*%0A`;
+                message += `*Détails des mesures :*\n`;
                 item.togas.forEach((toga, i) => {
                     const title = toga.broderie ? `Toge ${i+1} (${toga.broderie})` : `Toge ${i+1}`;
-                    message += `- ${title} : Poitrine ${toga.poitrine||'X'}cm, Hauteur ${toga.hauteur||'X'}cm, Tête ${toga.tete||'X'}cm, Manches ${toga.manches||'X'}cm%0A`;
+                    message += `- ${title} : Poitrine ${toga.poitrine||'X'}cm, Hauteur ${toga.hauteur||'X'}cm, Tête ${toga.tete||'X'}cm, Manches ${toga.manches||'X'}cm\n`;
                 });
-                message += `%0A`;
+                message += `\n`;
             });
             
             message += `Merci de m'indiquer la suite de la procédure.`;
             
-            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${message}`;
+            const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`;
             window.open(whatsappUrl, '_blank');
         });
     }
@@ -736,7 +740,7 @@ function submitQuoteForm(e) {
                    msgText;
                    
     // Using the same WhatsApp number variable if it exists in scope, otherwise use a placeholder
-    const phoneNumber = typeof whatsappNumber !== 'undefined' ? whatsappNumber : "2250102030405";
+    const phoneNumber = typeof whatsappNumber !== 'undefined' ? whatsappNumber : "2250501696060";
     const waUrl = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(waText)}`;
     
     closeQuoteModal();
