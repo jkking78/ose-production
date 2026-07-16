@@ -722,12 +722,133 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
             
-            // Add click listener to open product detail
-            item.addEventListener('click', () => {
-                const priceEl = item.querySelector('.item-price');
-                const basePrice = priceEl ? priceEl.textContent : '';
+            const expandSection = item.querySelector('.expandable-section');
+            const qtyInput = item.querySelector('.toga-quantity-input');
+            const formsWrapper = item.querySelector('.toga-forms-wrapper');
+            const submitBtn = item.querySelector('.btn-submit-whatsapp');
+            const modelName = item.querySelector('h3').textContent;
+            
+            const priceEl = item.querySelector('.item-price');
+            const modelPrice = priceEl ? priceEl.textContent : '';
 
-                openProductModal(srcs, 0, basePrice);
+            // Toggle form expansion
+            function toggleForm() {
+                const isActive = expandSection.classList.contains('active');
+                
+                // Collapse all other sections
+                document.querySelectorAll('.expandable-section').forEach(sec => {
+                    if (sec !== expandSection) {
+                        sec.classList.remove('active');
+                        sec.style.gridTemplateRows = '0fr';
+                    }
+                });
+                
+                if (isActive) {
+                    expandSection.classList.remove('active');
+                    expandSection.style.gridTemplateRows = '0fr';
+                } else {
+                    expandSection.classList.add('active');
+                    expandSection.style.gridTemplateRows = '1fr';
+                    if (formsWrapper.children.length === 0) {
+                        generateLocalTogaForms();
+                    }
+                }
+            }
+
+            // Click to toggle
+            const clickables = item.querySelectorAll('.gallery-image, .gallery-info');
+            clickables.forEach(clickable => {
+                clickable.addEventListener('click', (e) => {
+                    if (e.target.closest('.expandable-section')) {
+                        return;
+                    }
+                    e.preventDefault();
+                    toggleForm();
+                });
+            });
+
+            // Prevent propagation from form container
+            expandSection.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
+
+            // Generate dynamic forms locally
+            function generateLocalTogaForms() {
+                let qty = parseInt(qtyInput.value);
+                if (isNaN(qty) || qty < 1) qty = 1;
+                if (qty > 100) qty = 100;
+                
+                let html = '';
+                for (let i = 1; i <= qty; i++) {
+                    html += `
+                        <div class="toga-form-block" style="background: #f9f9f9; border: 1px solid #eee; border-radius: 12px; padding: 15px;">
+                            <div class="toga-form-header" style="font-weight: 700; font-size: 1.1rem; color: var(--magenta); margin-bottom: 12px; border-bottom: 2px solid #eee; padding-bottom: 5px;">Toge ${i}</div>
+                            <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                                <div class="form-group" style="flex: 1 1 calc(50% - 10px); display: flex; flex-direction: column;">
+                                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Tour de poitrine (cm)</label>
+                                    <input type="number" placeholder="Ex: 95" class="toga-measure" data-toga="${i}" data-field="poitrine" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                </div>
+                                <div class="form-group" style="flex: 1 1 calc(50% - 10px); display: flex; flex-direction: column;">
+                                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Hauteur totale (cm)</label>
+                                    <input type="number" placeholder="Ex: 175" class="toga-measure" data-toga="${i}" data-field="hauteur" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                </div>
+                            </div>
+                            <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 10px;">
+                                <div class="form-group" style="flex: 1 1 calc(50% - 10px); display: flex; flex-direction: column;">
+                                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Tour de tête (cm)</label>
+                                    <input type="number" placeholder="Ex: 58" class="toga-measure" data-toga="${i}" data-field="tete" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                </div>
+                                <div class="form-group" style="flex: 1 1 calc(50% - 10px); display: flex; flex-direction: column;">
+                                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Long. manches (cm)</label>
+                                    <input type="number" placeholder="Ex: 60" class="toga-measure" data-toga="${i}" data-field="manches" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                </div>
+                            </div>
+                            <div class="form-row" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 0;">
+                                <div class="form-group" style="flex: 1 1 100%; display: flex; flex-direction: column;">
+                                    <label style="font-size: 0.85rem; color: #666; margin-bottom: 5px;">Nom pour broderie (Optionnel)</label>
+                                    <input type="text" placeholder="Ex: Jean Dupont" class="toga-measure" data-toga="${i}" data-field="broderie" style="padding: 8px; border: 1px solid #ddd; border-radius: 6px;">
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }
+                formsWrapper.innerHTML = html;
+            }
+
+            qtyInput.addEventListener('input', generateLocalTogaForms);
+
+            // WhatsApp direct checkout
+            submitBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                let qty = parseInt(qtyInput.value) || 1;
+                const categoryTitle = document.querySelector('h2').textContent;
+                
+                let message = `🎓 *NOUVELLE COMMANDE DIRECTE* 🎓\n\n`;
+                message += `📁 *Catégorie* : ${categoryTitle}\n`;
+                message += `👕 *Modèle* : ${modelName}\n`;
+                message += `📦 *Quantité* : ${qty}\n`;
+                message += `💵 *Prix unitaire* : ${modelPrice}\n\n`;
+                message += `*Détails des mesures :*\n`;
+                
+                for (let i = 1; i <= qty; i++) {
+                    const poitrine = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="poitrine"]`)?.value || 'Non renseigné';
+                    const hauteur = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="hauteur"]`)?.value || 'Non renseigné';
+                    const tete = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="tete"]`)?.value || 'Non renseigné';
+                    const manches = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="manches"]`)?.value || 'Non renseigné';
+                    const broderie = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="broderie"]`)?.value || 'Aucune';
+                    
+                    message += `*Toge ${i}* :\n`;
+                    message += `  - Poitrine : ${poitrine} cm\n`;
+                    message += `  - Hauteur : ${hauteur} cm\n`;
+                    message += `  - Tête : ${tete} cm\n`;
+                    message += `  - Manches : ${manches} cm\n`;
+                    message += `  - Broderie : ${broderie}\n\n`;
+                }
+                
+                message += `Merci de valider ma commande.`;
+                
+                const whatsappUrl = `https://wa.me/2250501696060?text=${encodeURIComponent(message)}`;
+                window.open(whatsappUrl, '_blank');
             });
         });
     }

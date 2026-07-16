@@ -52,7 +52,6 @@
                 <div style="position: absolute; top: 15px; right: 15px; z-index: 10; background: transparent; border: none; font-size: 24px; color: #333;">
                     <i class="ph ph-heart"></i>
                 </div>
-            </div>
             <div class="gallery-info" style="text-align: left; padding: 15px 0; display: flex; justify-content: space-between; align-items: flex-start;">
                 <div style="flex: 1;">
                     <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Couleur : <strong>Assortie</strong></div>
@@ -60,15 +59,35 @@
                     
                     <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #111; margin: 0 0 5px 0;">Modèle 1</h3>
                     <p style="font-size: 1rem; color: #333; margin-bottom: 5px;">Universités Privées</p>
-                    <div style="text-decoration: underline; font-size: 0.9rem; color: #555; margin-bottom: 15px;">Description détaillée</div>
+                    <div class="btn-description" style="text-decoration: underline; font-size: 0.9rem; color: #555; margin-bottom: 15px; cursor: pointer;">Description détaillée</div>
                     
                     <div class="item-price" style="font-size: 1.4rem; font-weight: 700; color: #d00000;">20 000 FCFA</div>
                 </div>
                 <div style="margin-left: 15px; margin-top: 55px;">
-                    <button class="btn-primary" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 30px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                    <button class="btn-primary btn-commander" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 30px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
                         <i class="ph ph-shopping-bag" style="font-size: 1.2rem;"></i>
                         Commander
                     </button>
+                </div>
+            </div>
+            
+            <!-- Formulaire de commande déroulant -->
+            <div class="expandable-section" style="display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.25, 1, 0.5, 1); overflow: hidden; background: #fbfbfb; border-radius: 12px; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">
+                <div class="expandable-content" style="min-height: 0; padding: 0 20px;">
+                    <div style="padding: 25px 0;">
+                        <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; color: #111;">Formulaire de Commande</h4>
+                        <div class="quantity-wrapper" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.95rem;">Nombre de toges :</label>
+                            <input type="number" class="toga-quantity-input" min="1" max="100" value="1" style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center;">
+                        </div>
+                        <div class="toga-forms-wrapper" style="display: flex; flex-direction: column; gap: 15px;">
+                            <!-- Dynamic toga measurement forms will be generated here -->
+                        </div>
+                        <button class="btn-primary btn-submit-whatsapp" style="width: 100%; margin-top: 25px; padding: 14px; font-size: 1rem; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(156,75,139,0.25);">
+                            <i class="ph ph-whatsapp-logo" style="font-size: 1.4rem;"></i>
+                            Commander sur WhatsApp
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
