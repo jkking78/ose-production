@@ -1,4 +1,34 @@
 document.addEventListener('DOMContentLoaded', () => {
+    // --- Confetti Celebration on Homepage Entry ---
+    if (document.getElementById('accueil') && typeof confetti === 'function') {
+        const duration = 2.5 * 1000;
+        const end = Date.now() + duration;
+
+        (function frame() {
+            // launch a few confetti from the left edge
+            confetti({
+                particleCount: 3,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                zIndex: 99999
+            });
+            // and launch a few confetti from the right edge
+            confetti({
+                particleCount: 3,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                zIndex: 99999
+            });
+
+            // keep going until we are out of time
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        }());
+    }
+
     // --- Navbar Scroll Effect ---
     const navbar = document.querySelector('.navbar');
     
