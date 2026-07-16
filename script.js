@@ -283,20 +283,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Override the old lightbox click
-    document.querySelectorAll('.btn-icon').forEach(btn => {
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
+    // Attach click events to open catalog modal (clicks on image, titles, or button)
+    document.querySelectorAll('.product-card').forEach(card => {
+        const btn = card.querySelector('.btn-icon');
+        const clickables = card.querySelectorAll('.product-category, h3, .product-image img, .btn-icon');
         
-        newBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const card = newBtn.closest('.product-card');
-            const categoryName = card.querySelector('h3').textContent;
-            const priceText = card.querySelector('.product-price').textContent;
-            const imagesAttr = newBtn.getAttribute('data-images');
-            
-            if (imagesAttr) {
-                openGalleryModal(categoryName, priceText, imagesAttr.split(','));
+        clickables.forEach(el => {
+            el.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const categoryName = card.querySelector('h3').textContent;
+                const priceText = card.querySelector('.product-price').textContent;
+                const imagesAttr = btn.getAttribute('data-images');
+                
+                if (imagesAttr) {
+                    openGalleryModal(categoryName, priceText, imagesAttr.split(','));
+                }
+            });
+            // Make them look clickable
+            if (el.tagName !== 'BUTTON') {
+                el.style.cursor = 'pointer';
             }
         });
     });
@@ -310,8 +315,12 @@ document.addEventListener('DOMContentLoaded', () => {
             item.className = 'gallery-item';
             
             item.innerHTML = `
-                <img src="${src}" alt="Modèle ${index + 1}" loading="lazy">
-                <div class="gallery-item-overlay">Voir détails</div>
+                <div class="gallery-image">
+                    <img src="${src}" alt="Modèle ${index + 1}" loading="lazy">
+                </div>
+                <div class="gallery-info">
+                    <h3>Modèle ${index + 1}</h3>
+                </div>
             `;
             
             item.addEventListener('click', () => {
