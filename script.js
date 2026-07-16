@@ -296,7 +296,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const imagesAttr = btn.getAttribute('data-images');
                 
                 if (imagesAttr) {
-                    openGalleryModal(categoryName, priceText, imagesAttr.split(','));
+                    openGalleryModal(categoryName, priceText, imagesAttr.split('|'));
                 }
             });
             // Make them look clickable
@@ -306,25 +306,57 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    function openGalleryModal(title, basePrice, images) {
+    function openGalleryModal(title, basePrice, imageGroups) {
         galleryTitle.textContent = title;
         galleryGrid.innerHTML = '';
         
-        images.forEach((src, index) => {
+        // Stop any previous intervals
+        if (window.carouselIntervals) {
+            window.carouselIntervals.forEach(clearInterval);
+        }
+        window.carouselIntervals = [];
+        
+        imageGroups.forEach((groupStr, index) => {
+            const srcs = groupStr.split(',');
             const item = document.createElement('div');
             item.className = 'gallery-item';
             
+            let imagesHtml = srcs.map((src, i) => 
+                `<img src="${src}" alt="Modèle ${index + 1} - ${i+1}" loading="lazy" style="${i===0 ? 'opacity:1;' : 'opacity:0;'} position: absolute; top:0; left:0; transition: opacity 0.5s ease-in-out;">`
+            ).join('');
+            
             item.innerHTML = `
-                <div class="gallery-image">
-                    <img src="${src}" alt="Modèle ${index + 1}" loading="lazy">
+                <div class="gallery-image" style="position: relative;">
+                    ${imagesHtml}
+                    ${srcs.length > 1 ? `<div class="carousel-dots" style="position: absolute; bottom: 10px; width: 100%; display: flex; justify-content: center; gap: 5px; z-index: 2;">
+                        ${srcs.map((_, i) => `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${i===0 ? 'var(--magenta)' : 'rgba(255,255,255,0.7)'};"></div>`).join('')}
+                    </div>` : ''}
                 </div>
                 <div class="gallery-info">
                     <h3>Modèle ${index + 1}</h3>
                 </div>
             `;
             
+            // Auto slide logic
+            if (srcs.length > 1) {
+                let currentIndex = 0;
+                const imgs = item.querySelectorAll('.gallery-image img');
+                const dots = item.querySelectorAll('.carousel-dots div');
+                
+                const interval = setInterval(() => {
+                    imgs[currentIndex].style.opacity = '0';
+                    dots[currentIndex].style.background = 'rgba(255,255,255,0.7)';
+                    
+                    currentIndex = (currentIndex + 1) % srcs.length;
+                    
+                    imgs[currentIndex].style.opacity = '1';
+                    dots[currentIndex].style.background = 'var(--magenta)';
+                }, 2500);
+                window.carouselIntervals.push(interval);
+            }
+            
             item.addEventListener('click', () => {
-                openProductModal(images, index, basePrice);
+                openProductModal(srcs, 0, basePrice);
             });
             
             galleryGrid.appendChild(item);
