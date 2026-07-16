@@ -1612,3 +1612,20 @@ footer {
         grid-template-columns: 1fr;
     }
 }
+
+/* Feature Card Checkmark */
+.feature-card {
+    position: relative;
+}
+.feature-checkmark {
+    position: absolute;
+    bottom: -10px;
+    right: -10px;
+    font-size: 3rem;
+    color: var(--purple);
+    opacity: 0.9;
+    transform: rotate(10deg);
+    pointer-events: none;
+    z-index: 10;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.15));
+}
