@@ -332,8 +332,8 @@ document.addEventListener('DOMContentLoaded', () => {
                         ${srcs.map((_, i) => `<div style="width: 6px; height: 6px; border-radius: 50%; background: ${i===0 ? 'var(--magenta)' : 'rgba(255,255,255,0.7)'};"></div>`).join('')}
                     </div>` : ''}
                 </div>
-                <div class="gallery-info">
-                    <h3>Modèle ${index + 1}</h3>
+                <div class="gallery-info" style="text-align: center; margin-top: 10px;">
+                    <button class="btn-primary" style="width: 100%; padding: 10px; font-size: 0.9rem;">Sélectionner</button>
                 </div>
             `;
             
