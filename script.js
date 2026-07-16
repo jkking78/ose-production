@@ -808,10 +808,10 @@ function submitQuoteForm(e) {
             }
             
             // Add click listener to open product detail
-            const title = document.querySelector('.section-header h2').textContent;
-            const basePrice = document.querySelector('.section-header p').textContent;
-            
             item.addEventListener('click', () => {
+                const priceEl = item.querySelector('.item-price');
+                const basePrice = priceEl ? priceEl.textContent : '';
+
                 openProductModal(srcs, 0, basePrice);
             });
         });
