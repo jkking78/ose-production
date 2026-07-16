@@ -291,12 +291,9 @@ document.addEventListener('DOMContentLoaded', () => {
         clickables.forEach(el => {
             el.addEventListener('click', (e) => {
                 e.stopPropagation();
-                const categoryName = card.querySelector('h3').textContent;
-                const priceText = card.querySelector('.product-price').textContent;
-                const imagesAttr = btn.getAttribute('data-images');
-                
-                if (imagesAttr) {
-                    openGalleryModal(categoryName, priceText, imagesAttr.split('|'));
+                const categoryId = card.getAttribute('data-category');
+                if (categoryId) {
+                    window.location.href = categoryId + '.html';
                 }
             });
             // Make them look clickable
@@ -787,3 +784,35 @@ function submitQuoteForm(e) {
     closeQuoteModal();
     window.open(waUrl, '_blank');
 }
+
+    // Initialize carousels for category pages
+    if (document.getElementById('category-grid')) {
+        document.querySelectorAll('.gallery-item').forEach((item, index) => {
+            const srcs = item.getAttribute('data-images').split(',');
+            if (srcs.length > 1) {
+                let currentIndex = 0;
+                const imgs = item.querySelectorAll('.gallery-image img');
+                const dots = item.querySelectorAll('.carousel-dots div');
+                
+                if (imgs.length > 1) {
+                    setInterval(() => {
+                        imgs[currentIndex].style.opacity = '0';
+                        if(dots[currentIndex]) dots[currentIndex].style.background = 'rgba(255,255,255,0.7)';
+                        
+                        currentIndex = (currentIndex + 1) % imgs.length;
+                        
+                        imgs[currentIndex].style.opacity = '1';
+                        if(dots[currentIndex]) dots[currentIndex].style.background = 'var(--magenta)';
+                    }, 2500);
+                }
+            }
+            
+            // Add click listener to open product detail
+            const title = document.querySelector('.section-header h2').textContent;
+            const basePrice = document.querySelector('.section-header p').textContent;
+            
+            item.addEventListener('click', () => {
+                openProductModal(srcs, 0, basePrice);
+            });
+        });
+    }
