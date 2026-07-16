@@ -853,6 +853,191 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    // --- Favorites (Wishlist) Logic ---
+    const btnFavorites = document.getElementById('floating-favorites');
+    const favoritesSidebar = document.getElementById('favorites-sidebar');
+    const closeFavoritesBtn = document.getElementById('close-favorites');
+    const favoritesItemsContainer = document.getElementById('favorites-items');
+    const favoritesBadge = document.getElementById('favorites-badge');
+    
+    let favorites = JSON.parse(localStorage.getItem('ose_favorites')) || [];
+
+    function saveFavorites() {
+        localStorage.setItem('ose_favorites', JSON.stringify(favorites));
+        updateFavoritesBadge();
+        renderFavorites();
+    }
+
+    function updateFavoritesBadge() {
+        if(favoritesBadge) {
+            favoritesBadge.textContent = favorites.length;
+            if(favorites.length > 0) {
+                favoritesBadge.style.display = 'flex';
+            } else {
+                favoritesBadge.style.display = 'none';
+            }
+        }
+    }
+
+    function toggleFavorite(itemData) {
+        const idx = favorites.findIndex(f => f.id === itemData.id);
+        if (idx > -1) {
+            favorites.splice(idx, 1);
+        } else {
+            favorites.push(itemData);
+        }
+        saveFavorites();
+        updateFavoritesUI();
+    }
+
+    function updateFavoritesUI() {
+        document.querySelectorAll('.gallery-item').forEach(card => {
+            const id = card.getAttribute('data-id');
+            const heartIcon = card.querySelector('.btn-favorite i');
+            if (id && heartIcon) {
+                const isFav = favorites.some(f => f.id === id);
+                if (isFav) {
+                    heartIcon.className = 'ph-fill ph-heart';
+                    heartIcon.style.color = 'var(--magenta)';
+                } else {
+                    heartIcon.className = 'ph ph-heart';
+                    heartIcon.style.color = '#333';
+                }
+            }
+        });
+    }
+
+    function renderFavorites() {
+        if (!favoritesItemsContainer) return;
+        favoritesItemsContainer.innerHTML = '';
+        
+        if (favorites.length === 0) {
+            favoritesItemsContainer.innerHTML = `
+                <div style="text-align: center; color: #666; margin-top: 50px;">
+                    <i class="ph ph-heart-break" style="font-size: 3rem; color: #ccc; margin-bottom: 10px;"></i>
+                    <p>Aucun modèle favori pour le moment.</p>
+                </div>
+            `;
+            return;
+        }
+        
+        favorites.forEach(item => {
+            const div = document.createElement('div');
+            div.style.cssText = "display: flex; gap: 15px; background: #fafafa; border: 1px solid #eee; padding: 15px; border-radius: 12px; align-items: center; position: relative;";
+            
+            const firstImg = item.images.split(',')[0];
+            
+            div.innerHTML = `
+                <img src="${firstImg}" alt="${item.modelName}" style="width: 70px; height: 90px; object-fit: cover; border-radius: 8px;">
+                <div style="flex: 1;">
+                    <h4 style="font-size: 1.1rem; font-weight: 700; color: #111; margin: 0 0 5px 0;">${item.modelName}</h4>
+                    <p style="font-size: 0.9rem; color: #666; margin: 0 0 10px 0;">${item.category}</p>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <button class="btn-primary btn-go-favorite" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 20px;" data-id="${item.id}">Commander</button>
+                        <button class="btn-remove-favorite" style="background: none; border: none; color: #999; cursor: pointer; font-size: 1.2rem; display: flex; align-items: center;" data-id="${item.id}">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
+                </div>
+                <div style="font-weight: 700; color: #d00000; font-size: 1.1rem; align-self: flex-start;">${item.price}</div>
+            `;
+            
+            // Delete action
+            div.querySelector('.btn-remove-favorite').addEventListener('click', (e) => {
+                e.stopPropagation();
+                toggleFavorite(item);
+            });
+            
+            // Commander action
+            div.querySelector('.btn-go-favorite').addEventListener('click', (e) => {
+                e.stopPropagation();
+                favoritesSidebar.classList.remove('active');
+                if (cartOverlay) cartOverlay.classList.remove('active');
+                
+                // Get page name from item.id (e.g. enfant-model-1 -> enfant.html)
+                const pageName = item.id.split('-model-')[0] + '.html';
+                
+                if (window.location.pathname.endsWith(pageName)) {
+                    // Already on the page, scroll to it
+                    const targetEl = document.querySelector(`.gallery-item[data-id="${item.id}"]`);
+                    if (targetEl) {
+                        targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Toggle it open
+                        const expandSection = targetEl.querySelector('.expandable-section');
+                        if (expandSection && !expandSection.classList.contains('active')) {
+                            const btnCommander = targetEl.querySelector('.btn-commander');
+                            if (btnCommander) btnCommander.click();
+                        }
+                    }
+                } else {
+                    // Redirect and scroll
+                    window.location.href = `${pageName}?scroll=${item.id}`;
+                }
+            });
+            
+            favoritesItemsContainer.appendChild(div);
+        });
+    }
+
+    // Toggle favorites sidebar
+    if (btnFavorites) {
+        btnFavorites.addEventListener('click', () => {
+            favoritesSidebar.classList.add('active');
+            if (cartOverlay) cartOverlay.classList.add('active');
+        });
+    }
+    
+    if (closeFavoritesBtn) {
+        closeFavoritesBtn.addEventListener('click', () => {
+            favoritesSidebar.classList.remove('active');
+            if (cartOverlay) cartOverlay.classList.remove('active');
+        });
+    }
+    
+    // Clicking overlay closes favorites sidebar too
+    if (cartOverlay) {
+        cartOverlay.addEventListener('click', () => {
+            favoritesSidebar.classList.remove('active');
+        });
+    }
+
+    // Initial setup on category grid
+    if (document.getElementById('category-grid')) {
+        updateFavoritesUI();
+        
+        // Add click listener on all heart buttons
+        document.querySelectorAll('.btn-favorite').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                const card = btn.closest('.gallery-item');
+                const id = card.getAttribute('data-id');
+                const modelName = card.getAttribute('data-model');
+                const category = card.getAttribute('data-category');
+                const price = card.getAttribute('data-price');
+                const images = card.getAttribute('data-images');
+                
+                toggleFavorite({ id, modelName, category, price, images });
+            });
+        });
+    }
+
+    // Check if redirect query param exists
+    const urlParams = new URLSearchParams(window.location.search);
+    const scrollToId = urlParams.get('scroll');
+    if (scrollToId) {
+        setTimeout(() => {
+            const targetEl = document.querySelector(`.gallery-item[data-id="${scrollToId}"]`);
+            if (targetEl) {
+                targetEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                const btnCommander = targetEl.querySelector('.btn-commander');
+                if (btnCommander) btnCommander.click();
+            }
+        }, 500);
+    }
+
+    // Init favorites display
+    saveFavorites();
+
     // Logo click confirmation
     document.querySelectorAll('.navbar .logo').forEach(logo => {
         logo.style.cursor = 'pointer';

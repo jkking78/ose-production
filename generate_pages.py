@@ -42,11 +42,11 @@ def generate_page(cat, index):
             dotsHtml = f'<div class="carousel-dots" style="position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; z-index: 2;">{dots}</div>'
             
         grid_html += f'''
-        <div class="gallery-item" data-images="{groupStr}" style="margin-bottom: 40px; cursor: pointer;">
+        <div class="gallery-item" data-images="{groupStr}" data-id="{cat['name']}-model-{i+1}" data-model="Modèle {i+1}" data-category="{cat['title']}" data-price="{cat['price']}" style="margin-bottom: 40px; cursor: pointer;">
             <div class="gallery-image" style="position: relative; width: 100%; padding-bottom: 125%; background: #f5f5f5; overflow: hidden;">
                 {imagesHtml}
                 {dotsHtml}
-                <div style="position: absolute; top: 15px; right: 15px; z-index: 10; background: transparent; border: none; font-size: 24px; color: #333;">
+                <div class="btn-favorite" style="position: absolute; top: 15px; right: 15px; z-index: 10; background: rgba(255,255,255,0.85); border: none; font-size: 20px; color: #333; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;">
                     <i class="ph ph-heart"></i>
                 </div>
             </div>

@@ -308,6 +308,12 @@
         <span id="cart-badge" class="cart-badge">0</span>
     </div>
 
+    <!-- Floating Favorites Button -->
+    <div id="floating-favorites" class="floating-favorites">
+        <i class="ph ph-heart"></i>
+        <span id="favorites-badge" class="favorites-badge">0</span>
+    </div>
+
     <!-- Cart Sidebar -->
     <div id="cart-sidebar" class="cart-sidebar">
         <div class="cart-header">
@@ -323,6 +329,18 @@
             </button>
         </div>
     </div>
+
+    <!-- Favorites Sidebar -->
+    <div id="favorites-sidebar" class="favorites-sidebar">
+        <div class="cart-header">
+            <h2>Mes Favoris</h2>
+            <button id="close-favorites" class="close-cart">&times;</button>
+        </div>
+        <div id="favorites-items" class="cart-items" style="padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px;">
+            <!-- Favorites items will be injected here by JS -->
+        </div>
+    </div>
+
     <div id="cart-overlay" class="cart-overlay"></div>
 
 
