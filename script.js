@@ -851,11 +851,17 @@ document.addEventListener('DOMContentLoaded', () => {
             submitBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 let qty = parseInt(qtyInput.value) || 1;
-                const categoryTitle = document.querySelector('h2').textContent;
+                const categoryTitle = item.getAttribute('data-category') || 'Toges';
+                const imagesAttr = item.getAttribute('data-images');
+                const firstImage = imagesAttr ? imagesAttr.split(',')[0] : '';
+                const imageURL = firstImage ? window.location.origin + '/' + encodeURI(firstImage) : '';
                 
                 let message = `🎓 *NOUVELLE COMMANDE DIRECTE* 🎓\n\n`;
                 message += `📁 *Catégorie* : ${categoryTitle}\n`;
                 message += `👕 *Modèle* : ${modelName}\n`;
+                if (imageURL) {
+                    message += `🖼️ *Image de référence* : ${imageURL}\n`;
+                }
                 message += `📦 *Quantité* : ${qty}\n`;
                 message += `💵 *Prix unitaire* : ${modelPrice}\n\n`;
                 message += `*Détails des mesures :*\n`;
