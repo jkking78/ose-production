@@ -17,7 +17,8 @@ categories = [
     {'name': 'enfant', 'title': 'Collection Toges Enfant', 'price': '25 000 FCFA'},
     {'name': 'licence-master', 'title': 'Collection Toges Licence & Master', 'price': '60 000 FCFA'},
     {'name': 'doctorat', 'title': 'Collection Toges Doctorat', 'price': '125 000 FCFA'},
-    {'name': 'international', 'title': 'Universités Privées', 'price': '20 000 FCFA'}
+    {'name': 'international', 'title': 'Universités Privées', 'price': '200 000 FCFA'},
+    {'name': 'enseignants', 'title': 'Collection Toges Enseignants', 'price': '150 000 FCFA'}
 ]
 
 def generate_page(cat, index):
