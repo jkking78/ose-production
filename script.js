@@ -1,33 +1,54 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- Confetti Celebration on Homepage Entry ---
-    if (document.getElementById('accueil') && typeof confetti === 'function') {
+    // --- Confetti Celebration on Page Entry ---
+    function triggerCelebration() {
+        if (typeof confetti !== 'function') return;
+
+        // Initial prominent burst from center-bottom
+        confetti({
+            particleCount: 90,
+            spread: 90,
+            origin: { y: 0.6 },
+            zIndex: 99999
+        });
+
+        // Continuous side bursts for 2.5 seconds
         const duration = 2.5 * 1000;
         const end = Date.now() + duration;
 
         (function frame() {
-            // launch a few confetti from the left edge
             confetti({
-                particleCount: 3,
+                particleCount: 4,
                 angle: 60,
-                spread: 55,
-                origin: { x: 0 },
+                spread: 60,
+                origin: { x: 0, y: 0.65 },
                 zIndex: 99999
             });
-            // and launch a few confetti from the right edge
             confetti({
-                particleCount: 3,
+                particleCount: 4,
                 angle: 120,
-                spread: 55,
-                origin: { x: 1 },
+                spread: 60,
+                origin: { x: 1, y: 0.65 },
                 zIndex: 99999
             });
 
-            // keep going until we are out of time
             if (Date.now() < end) {
                 requestAnimationFrame(frame);
             }
         }());
     }
+
+    // Reliable launcher with retry if CDN script loads with slight delay
+    let celebrationAttempts = 0;
+    function initCelebration() {
+        if (typeof confetti === 'function') {
+            triggerCelebration();
+        } else if (celebrationAttempts < 15) {
+            celebrationAttempts++;
+            setTimeout(initCelebration, 150);
+        }
+    }
+
+    initCelebration();
 
     // --- Navbar Scroll Effect ---
     const navbar = document.querySelector('.navbar');
