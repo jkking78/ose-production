@@ -341,6 +341,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const detailNext = document.getElementById('detail-next');
     const btnAddCart = document.getElementById('btn-add-cart');
     const toast = document.getElementById('toast');
+    if (toast) {
+        toast.classList.remove('show');
+    }
     
     let currentDetailImages = [];
     let currentDetailIndex = 0;

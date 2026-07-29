@@ -1207,10 +1207,16 @@ footer {
     font-weight: 500;
     box-shadow: 0 10px 30px rgba(0,0,0,0.2);
     z-index: 99999;
-    transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55), opacity 0.3s ease, visibility 0.3s ease;
 }
 .toast.show {
     bottom: 40px;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
 }
 
 
