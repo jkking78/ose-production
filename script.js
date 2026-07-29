@@ -3,31 +3,54 @@ document.addEventListener('DOMContentLoaded', () => {
     function triggerCelebration() {
         if (typeof confetti !== 'function') return;
 
-        // Initial prominent burst from center-bottom
+        const colors = ['#9c4b8b', '#ffd700', '#ff1493', '#00e5ff', '#ffffff', '#ff4500', '#8a2be2'];
+
+        // Big initial double burst from left & right
         confetti({
-            particleCount: 90,
-            spread: 90,
-            origin: { y: 0.6 },
+            particleCount: 100,
+            spread: 100,
+            origin: { x: 0.2, y: 0.6 },
+            colors: colors,
+            zIndex: 99999
+        });
+        confetti({
+            particleCount: 100,
+            spread: 100,
+            origin: { x: 0.8, y: 0.6 },
+            colors: colors,
             zIndex: 99999
         });
 
-        // Continuous side bursts for 2.5 seconds
-        const duration = 2.5 * 1000;
+        // Mid-way booster fireworks at 1.2 seconds
+        setTimeout(() => {
+            confetti({
+                particleCount: 120,
+                spread: 120,
+                origin: { x: 0.5, y: 0.5 },
+                colors: colors,
+                zIndex: 99999
+            });
+        }, 1200);
+
+        // Continuous rich side cannons for 3.5 seconds
+        const duration = 3.5 * 1000;
         const end = Date.now() + duration;
 
         (function frame() {
             confetti({
-                particleCount: 4,
+                particleCount: 6,
                 angle: 60,
-                spread: 60,
-                origin: { x: 0, y: 0.65 },
+                spread: 70,
+                origin: { x: 0, y: 0.6 },
+                colors: colors,
                 zIndex: 99999
             });
             confetti({
-                particleCount: 4,
+                particleCount: 6,
                 angle: 120,
-                spread: 60,
-                origin: { x: 1, y: 0.65 },
+                spread: 70,
+                origin: { x: 1, y: 0.6 },
+                colors: colors,
                 zIndex: 99999
             });
 
