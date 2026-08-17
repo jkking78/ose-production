@@ -956,12 +956,132 @@ footer {
     color: white;
     font-family: var(--font-primary);
     font-size: 1rem;
-    background: rgba(0,0,0,0.5);
-    padding: 5px 15px;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    padding: 6px 18px;
     border-radius: 20px;
+    font-weight: 600;
+}
+
+@media (max-width: 768px) {
+    .lightbox-prev, .lightbox-next {
+        width: 42px;
+        height: 42px;
+        font-size: 20px;
+        background: rgba(0, 0, 0, 0.4);
+    }
+    .lightbox-prev { left: 10px; }
+    .lightbox-next { right: 10px; }
+    .lightbox-close { top: 15px; right: 20px; font-size: 34px; }
+    .lightbox-counter { bottom: 20px; font-size: 0.9rem; padding: 4px 14px; }
 }
 
 .product-image img { transition: opacity 0.3s ease; }
+
+/* --- Manual Card Image Carousel Controls --- */
+.gallery-image, .admin-card-img {
+    position: relative;
+    user-select: none;
+}
+
+.card-carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.92);
+    color: #1e293b;
+    border: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    z-index: 10;
+    opacity: 0;
+    transition: opacity 0.25s ease, background 0.2s, transform 0.2s, color 0.2s;
+}
+
+.gallery-item:hover .card-carousel-nav,
+.admin-card:hover .card-carousel-nav {
+    opacity: 1;
+}
+
+.card-carousel-prev {
+    left: 10px;
+}
+
+.card-carousel-next {
+    right: 10px;
+}
+
+.card-carousel-nav:hover {
+    background: #ffffff;
+    color: #9c4b8b;
+    transform: translateY(-50%) scale(1.12);
+}
+
+.card-carousel-nav:active {
+    transform: translateY(-50%) scale(0.92);
+}
+
+/* Interactive Carousel Dots */
+.carousel-dots {
+    position: absolute;
+    bottom: 12px;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 6px;
+    z-index: 8;
+    pointer-events: auto;
+}
+
+.carousel-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.65);
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    padding: 0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.carousel-dot.active {
+    background: #9c4b8b !important;
+    transform: scale(1.35);
+    border-color: #ffffff;
+    box-shadow: 0 0 8px rgba(156, 75, 139, 0.7);
+}
+
+.carousel-dot:hover {
+    background: #ffffff;
+    transform: scale(1.2);
+}
+
+@media (max-width: 768px) {
+    /* Always visible on touch mobile screens */
+    .card-carousel-nav {
+        opacity: 0.9;
+        width: 34px;
+        height: 34px;
+        font-size: 1.05rem;
+        background: rgba(255, 255, 255, 0.95);
+    }
+    .card-carousel-prev { left: 8px; }
+    .card-carousel-next { right: 8px; }
+    .carousel-dot {
+        width: 8px;
+        height: 8px;
+    }
+}
 
 
 /* --- Ecommerce Modals --- */

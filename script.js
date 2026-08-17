@@ -171,138 +171,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxNext = document.querySelector('.lightbox-next');
     const lightboxCounter = document.querySelector('.lightbox-counter');
 
-    if (!lightbox) return; // Not on a page with lightbox, exit early from this DOMContentLoaded block
-    
     let currentImages = [];
     let currentIndex = 0;
-
-    function openLightbox(imagesStr) {
-        if (!imagesStr) return;
-        currentImages = imagesStr.replace(/\|/g, ',').split(',');
-        currentIndex = 0;
-        updateLightbox();
-        lightbox.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-    }
-
-    function closeLightbox() {
-        lightbox.classList.remove('active');
-        document.body.style.overflow = '';
-        setTimeout(() => {
-            lightboxImg.src = '';
-        }, 300); // Wait for transition
-    }
-
-    function updateLightbox() {
-        if (currentImages.length === 0) return;
-        
-        // Hide arrows if only 1 image
-        if (currentImages.length <= 1) {
-            lightboxPrev.style.display = 'none';
-            lightboxNext.style.display = 'none';
-        } else {
-            lightboxPrev.style.display = 'flex';
-            lightboxNext.style.display = 'flex';
-        }
-        
-        // Show counter
-        lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
-        
-        // Set image source
-        lightboxImg.src = currentImages[currentIndex];
-    }
-
-    function nextImage() {
-        currentIndex = (currentIndex + 1) % currentImages.length;
-        updateLightbox();
-    }
-
-    function prevImage() {
-        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
-        updateLightbox();
-    }
-
-    // Attach click events to Aperçu buttons
-    document.querySelectorAll('.btn-icon').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            e.stopPropagation(); // prevent other clicks
-            const imagesAttr = btn.getAttribute('data-images');
-            openLightbox(imagesAttr);
-        });
-    });
-
-    // Close on click outside, close button, or ESC key
-    lightboxClose.addEventListener('click', closeLightbox);
-    lightbox.addEventListener('click', (e) => {
-        if (e.target === lightbox || e.target === document.querySelector('.lightbox-content')) {
-            closeLightbox();
-        }
-    });
-    
-    document.addEventListener('keydown', (e) => {
-        if (!lightbox.classList.contains('active')) return;
-        if (e.key === 'Escape') closeLightbox();
-        if (e.key === 'ArrowRight') nextImage();
-        if (e.key === 'ArrowLeft') prevImage();
-    });
-
-    lightboxPrev.addEventListener('click', (e) => {
-        e.stopPropagation();
-        prevImage();
-    });
-    
-    lightboxNext.addEventListener('click', (e) => {
-        e.stopPropagation();
-        nextImage();
-    });
-
-
-    // --- Thumbnail Auto-Cycle Logic ---
-    const productCardsList = document.querySelectorAll('.product-card');
-    productCardsList.forEach(card => {
-        const btn = card.querySelector('.btn-icon');
-        const img = card.querySelector('.product-image img');
-        if (btn && img) {
-            const imagesAttr = btn.getAttribute('data-images');
-            if (imagesAttr) {
-                const images = imagesAttr.replace(/\|/g, ',').split(',');
-                if (images.length > 1) {
-                    let thumbIndex = 0;
-                    // Preload images
-                    images.forEach(src => {
-                        const preloader = new Image();
-                        preloader.src = src;
-                    });
-                    
-                    // Auto cycle every 3 seconds
-                    setInterval(() => {
-                        // Only cycle if not hovered, to prevent annoying user who wants to click Aperçu
-                        if (!card.matches(':hover')) {
-                            thumbIndex = (thumbIndex + 1) % images.length;
-                            // Add a small fade effect
-                            img.style.opacity = 0;
-                            setTimeout(() => {
-                                img.src = images[thumbIndex];
-                                img.style.opacity = 1;
-                            }, 300);
-                        }
-                    }, 3000 + Math.random() * 1000); // Stagger intervals slightly
-                }
-            }
-        }
-    });
-
-    // --- Lightbox Auto-Play Logic ---
-    let lightboxInterval;
-
-    function startLightboxAutoplay() {
-        stopLightboxAutoplay();
-        if (currentImages.length > 1) {
-            lightboxInterval = setInterval(() => {
-                nextImage();
-            }, 3000);
-        }
-    }
+    let lightboxInterval = null;
 
     function stopLightboxAutoplay() {
         if (lightboxInterval) {
@@ -311,28 +182,299 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Modify openLightbox to start autoplay
-    const originalOpenLightbox = openLightbox;
-    openLightbox = function(imagesStr) {
-        originalOpenLightbox(imagesStr);
-        startLightboxAutoplay();
-    };
-
-    // Modify closeLightbox to stop autoplay
-    const originalCloseLightbox = closeLightbox;
-    closeLightbox = function() {
-        originalCloseLightbox();
+    function startLightboxAutoplay() {
         stopLightboxAutoplay();
-    };
-    
-    // Stop autoplay when user manually navigates
-    lightboxPrev.addEventListener('click', stopLightboxAutoplay);
-    lightboxNext.addEventListener('click', stopLightboxAutoplay);
-    document.addEventListener('keydown', (e) => {
-        if (lightbox.classList.contains('active') && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) {
-            stopLightboxAutoplay();
+        if (currentImages.length > 1) {
+            lightboxInterval = setInterval(() => {
+                nextImage();
+            }, 3500);
         }
+    }
+
+    function updateLightbox() {
+        if (!lightbox || currentImages.length === 0) return;
+        
+        // Hide arrows if only 1 image
+        if (currentImages.length <= 1) {
+            if (lightboxPrev) lightboxPrev.style.display = 'none';
+            if (lightboxNext) lightboxNext.style.display = 'none';
+        } else {
+            if (lightboxPrev) lightboxPrev.style.display = 'flex';
+            if (lightboxNext) lightboxNext.style.display = 'flex';
+        }
+        
+        // Show counter
+        if (lightboxCounter) {
+            lightboxCounter.textContent = `${currentIndex + 1} / ${currentImages.length}`;
+        }
+        
+        // Set image source
+        if (lightboxImg) {
+            lightboxImg.src = currentImages[currentIndex];
+        }
+    }
+
+    function nextImage() {
+        if (currentImages.length <= 1) return;
+        currentIndex = (currentIndex + 1) % currentImages.length;
+        updateLightbox();
+    }
+
+    function prevImage() {
+        if (currentImages.length <= 1) return;
+        currentIndex = (currentIndex - 1 + currentImages.length) % currentImages.length;
+        updateLightbox();
+    }
+
+    function openLightbox(imagesStr, startIndex = 0) {
+        if (!lightbox || !imagesStr) return;
+        const rawList = Array.isArray(imagesStr) ? imagesStr : imagesStr.replace(/\|/g, ',').split(',');
+        currentImages = rawList.map(s => s.trim()).filter(Boolean);
+        if (currentImages.length === 0) return;
+
+        currentIndex = Math.max(0, Math.min(startIndex, currentImages.length - 1));
+        updateLightbox();
+        lightbox.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent scrolling
+        startLightboxAutoplay();
+    }
+    window.openLightbox = openLightbox;
+
+    function closeLightbox() {
+        if (!lightbox) return;
+        lightbox.classList.remove('active');
+        document.body.style.overflow = '';
+        stopLightboxAutoplay();
+        setTimeout(() => {
+            if (lightboxImg) lightboxImg.src = '';
+        }, 300);
+    }
+    window.closeLightbox = closeLightbox;
+
+    // Attach click events to Aperçu buttons
+    document.querySelectorAll('.btn-icon').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const imagesAttr = btn.getAttribute('data-images');
+            openLightbox(imagesAttr);
+        });
     });
+
+    if (lightbox) {
+        // Close on click outside, close button, or ESC key
+        if (lightboxClose) lightboxClose.addEventListener('click', closeLightbox);
+        lightbox.addEventListener('click', (e) => {
+            if (e.target === lightbox || e.target.classList.contains('lightbox-content')) {
+                closeLightbox();
+            }
+        });
+
+        // Click on left/right part of lightbox image to navigate manually
+        if (lightboxImg) {
+            lightboxImg.addEventListener('click', (e) => {
+                e.stopPropagation();
+                stopLightboxAutoplay();
+                const rect = lightboxImg.getBoundingClientRect();
+                const clickX = e.clientX - rect.left;
+                if (clickX < rect.width * 0.35) {
+                    prevImage();
+                } else {
+                    nextImage();
+                }
+            });
+        }
+
+        // Mobile Touch Swipe for Lightbox
+        let lbTouchStartX = 0;
+        let lbTouchStartY = 0;
+        lightbox.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                lbTouchStartX = e.touches[0].clientX;
+                lbTouchStartY = e.touches[0].clientY;
+            }
+        }, { passive: true });
+
+        lightbox.addEventListener('touchend', (e) => {
+            if (e.changedTouches.length === 0) return;
+            const diffX = e.changedTouches[0].clientX - lbTouchStartX;
+            const diffY = e.changedTouches[0].clientY - lbTouchStartY;
+            if (Math.abs(diffX) > 35 && Math.abs(diffX) > Math.abs(diffY)) {
+                stopLightboxAutoplay();
+                if (diffX < 0) {
+                    nextImage();
+                } else {
+                    prevImage();
+                }
+            }
+        }, { passive: true });
+
+        document.addEventListener('keydown', (e) => {
+            if (!lightbox.classList.contains('active')) return;
+            if (e.key === 'Escape') closeLightbox();
+            if (e.key === 'ArrowRight') { stopLightboxAutoplay(); nextImage(); }
+            if (e.key === 'ArrowLeft') { stopLightboxAutoplay(); prevImage(); }
+        });
+
+        if (lightboxPrev) {
+            lightboxPrev.addEventListener('click', (e) => {
+                e.stopPropagation();
+                stopLightboxAutoplay();
+                prevImage();
+            });
+        }
+
+        if (lightboxNext) {
+            lightboxNext.addEventListener('click', (e) => {
+                e.stopPropagation();
+                stopLightboxAutoplay();
+                nextImage();
+            });
+        }
+    }
+
+    // --- Universal Manual & Auto Image Carousel Helper ---
+    function setupImageCarousel(container, options = {}) {
+        if (!container) return null;
+        const imgs = container.querySelectorAll('img');
+        if (imgs.length <= 1) return null;
+
+        let currentIndex = 0;
+        let autoPlayTimer = null;
+        const count = imgs.length;
+
+        function showImage(index) {
+            currentIndex = (index + count) % count;
+            imgs.forEach((img, i) => {
+                img.style.opacity = (i === currentIndex) ? '1' : '0';
+                img.style.pointerEvents = (i === currentIndex) ? 'auto' : 'none';
+            });
+
+            const dots = container.querySelectorAll('.carousel-dot, .carousel-dots > div');
+            dots.forEach((dot, i) => {
+                if (i === currentIndex) {
+                    dot.classList.add('active');
+                    dot.style.background = '#9c4b8b';
+                } else {
+                    dot.classList.remove('active');
+                    dot.style.background = 'rgba(255,255,255,0.7)';
+                }
+            });
+        }
+
+        function resetAutoPlay() {
+            if (autoPlayTimer) clearInterval(autoPlayTimer);
+            if (!options.disableAutoPlay) {
+                autoPlayTimer = setInterval(() => {
+                    showImage(currentIndex + 1);
+                }, 3000);
+            }
+        }
+
+        function pauseAutoPlay() {
+            if (autoPlayTimer) clearInterval(autoPlayTimer);
+            setTimeout(resetAutoPlay, 8000);
+        }
+
+        function next(e) {
+            if (e) { e.stopPropagation(); e.preventDefault(); }
+            pauseAutoPlay();
+            showImage(currentIndex + 1);
+        }
+
+        function prev(e) {
+            if (e) { e.stopPropagation(); e.preventDefault(); }
+            pauseAutoPlay();
+            showImage(currentIndex - 1);
+        }
+
+        // Add navigation buttons if not present
+        let prevBtn = container.querySelector('.card-carousel-prev');
+        if (!prevBtn) {
+            prevBtn = document.createElement('button');
+            prevBtn.type = 'button';
+            prevBtn.className = 'card-carousel-nav card-carousel-prev';
+            prevBtn.setAttribute('aria-label', 'Photo précédente');
+            prevBtn.innerHTML = '<i class="ph ph-caret-left"></i>';
+            container.appendChild(prevBtn);
+        }
+        prevBtn.onclick = prev;
+
+        let nextBtn = container.querySelector('.card-carousel-next');
+        if (!nextBtn) {
+            nextBtn = document.createElement('button');
+            nextBtn.type = 'button';
+            nextBtn.className = 'card-carousel-nav card-carousel-next';
+            nextBtn.setAttribute('aria-label', 'Photo suivante');
+            nextBtn.innerHTML = '<i class="ph ph-caret-right"></i>';
+            container.appendChild(nextBtn);
+        }
+        nextBtn.onclick = next;
+
+        // Dots setup
+        let dotsContainer = container.querySelector('.carousel-dots');
+        if (!dotsContainer) {
+            dotsContainer = document.createElement('div');
+            dotsContainer.className = 'carousel-dots';
+            container.appendChild(dotsContainer);
+        }
+        if (dotsContainer.children.length !== count) {
+            dotsContainer.innerHTML = '';
+            for (let i = 0; i < count; i++) {
+                const dot = document.createElement('div');
+                dot.className = `carousel-dot ${i === 0 ? 'active' : ''}`;
+                dot.setAttribute('data-index', i);
+                dotsContainer.appendChild(dot);
+            }
+        }
+
+        dotsContainer.querySelectorAll('.carousel-dot, div').forEach((dot, i) => {
+            dot.classList.add('carousel-dot');
+            dot.onclick = (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                pauseAutoPlay();
+                showImage(i);
+            };
+        });
+
+        // Touch Swipe Gestures
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isSwiping = false;
+
+        container.addEventListener('touchstart', (e) => {
+            if (e.touches.length === 1) {
+                touchStartX = e.touches[0].clientX;
+                touchStartY = e.touches[0].clientY;
+                isSwiping = true;
+            }
+        }, { passive: true });
+
+        container.addEventListener('touchend', (e) => {
+            if (!isSwiping || e.changedTouches.length === 0) return;
+            isSwiping = false;
+            const diffX = e.changedTouches[0].clientX - touchStartX;
+            const diffY = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(diffX) > 30 && Math.abs(diffX) > Math.abs(diffY)) {
+                if (diffX < 0) {
+                    next(e);
+                } else {
+                    prev(e);
+                }
+            }
+        }, { passive: true });
+
+        showImage(0);
+        resetAutoPlay();
+
+        return {
+            next,
+            prev,
+            showImage,
+            getCurrentIndex: () => currentIndex
+        };
+    }
+    window.setupImageCarousel = setupImageCarousel;
 
 
     // --- Ecommerce Modals Logic ---
@@ -782,38 +924,44 @@ document.addEventListener('DOMContentLoaded', () => {
     renderCart();
 
     // Initialize carousels for category pages
-    if (document.getElementById('category-grid')) {
-        document.querySelectorAll('.gallery-item').forEach((item, index) => {
-            const srcs = item.getAttribute('data-images').split(',');
-            if (srcs.length > 1) {
-                let currentIndex = 0;
-                const imgs = item.querySelectorAll('.gallery-image img');
-                const dots = item.querySelectorAll('.carousel-dots div');
-                
-                if (imgs.length > 1) {
-                    setInterval(() => {
-                        imgs[currentIndex].style.opacity = '0';
-                        if(dots[currentIndex]) dots[currentIndex].style.background = 'rgba(255,255,255,0.7)';
-                        
-                        currentIndex = (currentIndex + 1) % imgs.length;
-                        
-                        imgs[currentIndex].style.opacity = '1';
-                        if(dots[currentIndex]) dots[currentIndex].style.background = 'var(--magenta)';
-                    }, 2500);
-                }
+    function initCategoryItemCarousels() {
+        if (!document.getElementById('category-grid')) return;
+        document.querySelectorAll('.gallery-item').forEach((item) => {
+            const rawImages = item.getAttribute('data-images') || '';
+            const srcs = rawImages.split(',').map(s => s.trim()).filter(Boolean);
+            const imageWrapper = item.querySelector('.gallery-image');
+
+            let carousel = null;
+            if (imageWrapper && srcs.length > 1) {
+                carousel = setupImageCarousel(imageWrapper);
             }
-            
+
+            if (imageWrapper) {
+                imageWrapper.style.cursor = 'zoom-in';
+                imageWrapper.title = 'Cliquez pour agrandir les photos';
+                imageWrapper.addEventListener('click', (e) => {
+                    if (e.target.closest('.card-carousel-nav') || e.target.closest('.carousel-dot') || e.target.closest('.btn-favorite')) {
+                        return;
+                    }
+                    e.stopPropagation();
+                    const activeIdx = carousel ? carousel.getCurrentIndex() : 0;
+                    if (window.openLightbox && srcs.length > 0) {
+                        window.openLightbox(srcs.join(','), activeIdx);
+                    }
+                });
+            }
+
             const expandSection = item.querySelector('.expandable-section');
             const qtyInput = item.querySelector('.toga-quantity-input');
             const formsWrapper = item.querySelector('.toga-forms-wrapper');
             const submitBtn = item.querySelector('.btn-submit-whatsapp');
-            const modelName = item.querySelector('h3').textContent;
-            
+            const modelName = item.querySelector('h3') ? item.querySelector('h3').textContent : '';
             const priceEl = item.querySelector('.item-price');
             const modelPrice = priceEl ? priceEl.textContent : '';
 
             // Toggle form expansion
             function toggleForm() {
+                if (!expandSection) return;
                 const isActive = expandSection.classList.contains('active');
                 
                 // Collapse all other sections
@@ -830,31 +978,41 @@ document.addEventListener('DOMContentLoaded', () => {
                 } else {
                     expandSection.classList.add('active');
                     expandSection.style.gridTemplateRows = '1fr';
-                    if (formsWrapper.children.length === 0) {
+                    if (formsWrapper && formsWrapper.children.length === 0 && qtyInput) {
                         generateLocalTogaForms();
                     }
                 }
             }
 
             // Click to toggle
-            const clickables = item.querySelectorAll('.gallery-image, .gallery-info');
-            clickables.forEach(clickable => {
-                clickable.addEventListener('click', (e) => {
-                    if (e.target.closest('.expandable-section')) {
-                        return;
-                    }
+            const btnDesc = item.querySelector('.btn-description');
+            if (btnDesc) {
+                btnDesc.addEventListener('click', (e) => {
                     e.preventDefault();
+                    e.stopPropagation();
                     toggleForm();
                 });
-            });
+            }
+
+            const btnCommander = item.querySelector('.btn-commander');
+            if (btnCommander) {
+                btnCommander.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    toggleForm();
+                });
+            }
 
             // Prevent propagation from form container
-            expandSection.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
+            if (expandSection) {
+                expandSection.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                });
+            }
 
             // Generate dynamic forms locally
             function generateLocalTogaForms() {
+                if (!qtyInput || !formsWrapper) return;
                 let qty = parseInt(qtyInput.value);
                 if (isNaN(qty) || qty < 1) qty = 1;
                 if (qty > 100) qty = 100;
@@ -896,49 +1054,55 @@ document.addEventListener('DOMContentLoaded', () => {
                 formsWrapper.innerHTML = html;
             }
 
-            qtyInput.addEventListener('input', generateLocalTogaForms);
+            if (qtyInput) {
+                qtyInput.addEventListener('input', generateLocalTogaForms);
+            }
 
             // WhatsApp direct checkout
-            submitBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                let qty = parseInt(qtyInput.value) || 1;
-                const categoryTitle = item.getAttribute('data-category') || 'Toges';
-                const imagesAttr = item.getAttribute('data-images');
-                const firstImage = imagesAttr ? imagesAttr.split(',')[0] : '';
-                const imageURL = firstImage ? window.location.origin + '/' + encodeURI(firstImage) : '';
-                
-                let message = `🎓 *NOUVELLE COMMANDE DIRECTE* 🎓\n\n`;
-                message += `📁 *Catégorie* : ${categoryTitle}\n`;
-                message += `👕 *Modèle* : ${modelName}\n`;
-                if (imageURL) {
-                    message += `🖼️ *Image de référence* : ${imageURL}\n`;
-                }
-                message += `📦 *Quantité* : ${qty}\n`;
-                message += `💵 *Prix unitaire* : ${modelPrice}\n\n`;
-                message += `*Détails des mesures :*\n`;
-                
-                for (let i = 1; i <= qty; i++) {
-                    const poitrine = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="poitrine"]`)?.value || 'Non renseigné';
-                    const hauteur = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="hauteur"]`)?.value || 'Non renseigné';
-                    const tete = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="tete"]`)?.value || 'Non renseigné';
-                    const manches = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="manches"]`)?.value || 'Non renseigné';
-                    const broderie = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="broderie"]`)?.value || 'Aucune';
+            if (submitBtn) {
+                submitBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    let qty = qtyInput ? (parseInt(qtyInput.value) || 1) : 1;
+                    const categoryTitle = item.getAttribute('data-category') || 'Toges';
+                    const imagesAttr = item.getAttribute('data-images');
+                    const firstImage = imagesAttr ? imagesAttr.split(',')[0] : '';
+                    const imageURL = firstImage ? window.location.origin + '/' + encodeURI(firstImage) : '';
                     
-                    message += `*Toge ${i}* :\n`;
-                    message += `  - Poitrine : ${poitrine} cm\n`;
-                    message += `  - Hauteur : ${hauteur} cm\n`;
-                    message += `  - Tête : ${tete} cm\n`;
-                    message += `  - Manches : ${manches} cm\n`;
-                    message += `  - Broderie : ${broderie}\n\n`;
-                }
+                    let message = `🎓 *NOUVELLE COMMANDE DIRECTE* 🎓\n\n`;
+                    message += `📁 *Catégorie* : ${categoryTitle}\n`;
+                    message += `👕 *Modèle* : ${modelName}\n`;
+                    if (imageURL) {
+                        message += `🖼️ *Image de référence* : ${imageURL}\n`;
+                    }
+                    message += `📦 *Quantité* : ${qty}\n`;
+                    message += `💵 *Prix unitaire* : ${modelPrice}\n\n`;
+                    message += `*Détails des mesures :*\n`;
                 
-                message += `Merci de valider ma commande.`;
-                
-                const whatsappUrl = `https://wa.me/2250501696060?text=${encodeURIComponent(message)}`;
-                window.open(whatsappUrl, '_blank');
-            });
+                    for (let i = 1; i <= qty; i++) {
+                        const poitrine = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="poitrine"]`)?.value || 'Non renseigné';
+                        const hauteur = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="hauteur"]`)?.value || 'Non renseigné';
+                        const tete = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="tete"]`)?.value || 'Non renseigné';
+                        const manches = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="manches"]`)?.value || 'Non renseigné';
+                        const broderie = formsWrapper.querySelector(`.toga-measure[data-toga="${i}"][data-field="broderie"]`)?.value || 'Aucune';
+                        
+                        message += `*Toge ${i}* :\n`;
+                        message += `  - Poitrine : ${poitrine} cm\n`;
+                        message += `  - Hauteur : ${hauteur} cm\n`;
+                        message += `  - Tête : ${tete} cm\n`;
+                        message += `  - Manches : ${manches} cm\n`;
+                        message += `  - Broderie : ${broderie}\n\n`;
+                    }
+                    
+                    message += `Merci de valider ma commande.`;
+                    
+                    const whatsappUrl = `https://wa.me/2250501696060?text=${encodeURIComponent(message)}`;
+                    window.open(whatsappUrl, '_blank');
+                });
+            }
         });
     }
+    window.initCategoryItemCarousels = initCategoryItemCarousels;
+    initCategoryItemCarousels();
 
     // --- Favorites (Wishlist) Logic ---
     const btnFavorites = document.getElementById('floating-favorites');
@@ -1763,12 +1927,34 @@ function initAdminPage() {
         itemsToRender.forEach(item => {
             const card = document.createElement('div');
             card.className = 'admin-card';
-            const firstImg = item.images && item.images.length > 0 ? item.images[0] : 'assets/toge1.jpg';
-            const imgCount = item.images ? item.images.length : 0;
+            const srcs = item.images && item.images.length > 0 ? item.images : ['assets/toge1.jpg'];
+            const imgCount = srcs.length;
+
+            let imagesHtml = '';
+            srcs.forEach((src, j) => {
+                const opacity = j === 0 ? '1' : '0';
+                imagesHtml += `<img src="${src}" alt="${item.model} - ${j + 1}" loading="lazy" style="opacity:${opacity}; position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.4s ease-in-out;">\n`;
+            });
+
+            let dotsHtml = '';
+            let navHtml = '';
+            if (srcs.length > 1) {
+                let dots = '';
+                srcs.forEach((_, j) => {
+                    dots += `<div class="carousel-dot ${j === 0 ? 'active' : ''}" data-index="${j}"></div>`;
+                });
+                dotsHtml = `<div class="carousel-dots">${dots}</div>`;
+                navHtml = `
+                    <button type="button" class="card-carousel-nav card-carousel-prev" aria-label="Photo précédente"><i class="ph ph-caret-left"></i></button>
+                    <button type="button" class="card-carousel-nav card-carousel-next" aria-label="Photo suivante"><i class="ph ph-caret-right"></i></button>
+                `;
+            }
 
             card.innerHTML = `
-                <div class="admin-card-img">
-                    <img src="${firstImg}" alt="${item.model}" loading="lazy">
+                <div class="admin-card-img" style="cursor: zoom-in;" title="Cliquez pour agrandir les photos">
+                    ${imagesHtml}
+                    ${navHtml}
+                    ${dotsHtml}
                     <div class="admin-card-badge">${imgCount} photo${imgCount > 1 ? 's' : ''}</div>
                 </div>
                 <div class="admin-card-body">
@@ -1786,6 +1972,24 @@ function initAdminPage() {
                 </div>
             `;
             adminGrid.appendChild(card);
+
+            const imgContainer = card.querySelector('.admin-card-img');
+            let carousel = null;
+            if (imgContainer && srcs.length > 1) {
+                carousel = setupImageCarousel(imgContainer);
+            }
+
+            if (imgContainer) {
+                imgContainer.addEventListener('click', (e) => {
+                    if (e.target.closest('.card-carousel-nav') || e.target.closest('.carousel-dot')) {
+                        return;
+                    }
+                    const activeIdx = carousel ? carousel.getCurrentIndex() : 0;
+                    if (window.openLightbox && srcs.length > 0) {
+                        window.openLightbox(srcs.join(','), activeIdx);
+                    }
+                });
+            }
         });
 
         // Add event listeners for edit and delete buttons
@@ -2058,20 +2262,24 @@ function renderDynamicCategoryPage() {
         });
 
         let dotsHtml = '';
+        let navHtml = '';
         if (srcs.length > 1) {
             let dots = '';
             srcs.forEach((_, j) => {
-                const bg = j === 0 ? '#000' : 'rgba(255,255,255,0.9)';
-                const border = j === 0 ? '' : 'border: 1px solid #ccc;';
-                dots += `<div style="width: 8px; height: 8px; border-radius: 50%; background: ${bg}; ${border} margin: 0 3px;"></div>`;
+                dots += `<div class="carousel-dot ${j === 0 ? 'active' : ''}" data-index="${j}"></div>`;
             });
-            dotsHtml = `<div class="carousel-dots" style="position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; z-index: 2;">${dots}</div>`;
+            dotsHtml = `<div class="carousel-dots">${dots}</div>`;
+            navHtml = `
+                <button type="button" class="card-carousel-nav card-carousel-prev" aria-label="Photo précédente"><i class="ph ph-caret-left"></i></button>
+                <button type="button" class="card-carousel-nav card-carousel-next" aria-label="Photo suivante"><i class="ph ph-caret-right"></i></button>
+            `;
         }
 
         gridHtml += `
         <div class="gallery-item" data-images="${groupStr}" data-id="${item.id}" data-model="${item.model}" data-category="${catTitle}" data-price="${item.price}" style="margin-bottom: 40px; cursor: pointer;">
-            <div class="gallery-image" style="position: relative; width: 100%; padding-bottom: 125%; background: #f5f5f5; overflow: hidden;">
+            <div class="gallery-image" style="position: relative; width: 100%; padding-bottom: 125%; background: #f5f5f5; overflow: hidden; cursor: zoom-in;" title="Cliquez pour agrandir les photos">
                 ${imagesHtml}
+                ${navHtml}
                 ${dotsHtml}
                 <div class="btn-favorite" style="position: absolute; top: 15px; right: 15px; z-index: 10; background: rgba(255,255,255,0.85); border: none; font-size: 20px; color: #333; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;">
                     <i class="ph ph-heart"></i>
@@ -2119,6 +2327,9 @@ function renderDynamicCategoryPage() {
     });
 
     categoryGrid.innerHTML = gridHtml;
+    if (window.initCategoryItemCarousels) {
+        window.initCategoryItemCarousels();
+    }
 }
 
 function refreshShopPagesIfActive() {
