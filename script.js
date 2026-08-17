@@ -1882,22 +1882,33 @@ function initAdminPage() {
     if (btnOpenModal) {
         btnOpenModal.addEventListener('click', () => {
             populateCategorySelect();
-            document.getElementById('admin-modal-title').textContent = "Ajouter un nouveau modèle";
+            const modalTitle = document.getElementById('admin-modal-title');
+            if (modalTitle) modalTitle.textContent = "Ajouter un nouveau modèle";
+            const modalIcon = document.getElementById('admin-modal-icon');
+            if (modalIcon) modalIcon.className = "ph ph-plus-circle";
+            const saveBtn = document.getElementById('btn-save-model');
+            if (saveBtn) saveBtn.innerHTML = '<i class="ph ph-check-circle" style="font-size: 1.2rem;"></i> Enregistrer le modèle';
             document.getElementById('edit-model-id').value = "";
             adminForm.reset();
             if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
             currentModalImages = [];
             renderPreviewThumbs();
+            const modalBody = modal.querySelector('.admin-modal-body');
+            if (modalBody) modalBody.scrollTop = 0;
             modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         });
     }
 
     // Close Modal
     function closeModal() {
         modal.classList.remove('active');
+        document.body.style.overflow = '';
         if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
     }
     if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+    const btnCancelModal = document.getElementById('btn-cancel-admin-modal');
+    if (btnCancelModal) btnCancelModal.addEventListener('click', closeModal);
 
     // Open Modal for Edit
     function openEditModal(categoryKey, modelId) {
@@ -1907,7 +1918,13 @@ function initAdminPage() {
         const item = models.find(m => m.id === modelId);
         if (!item) return;
 
-        document.getElementById('admin-modal-title').textContent = "Modifier le modèle";
+        const modalTitle = document.getElementById('admin-modal-title');
+        if (modalTitle) modalTitle.textContent = "Modifier le modèle";
+        const modalIcon = document.getElementById('admin-modal-icon');
+        if (modalIcon) modalIcon.className = "ph ph-pencil-simple";
+        const saveBtn = document.getElementById('btn-save-model');
+        if (saveBtn) saveBtn.innerHTML = '<i class="ph ph-check-circle" style="font-size: 1.2rem;"></i> Mettre à jour';
+
         document.getElementById('edit-model-id').value = item.id;
         document.getElementById('admin-model-category').value = categoryKey;
         if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
@@ -1915,7 +1932,10 @@ function initAdminPage() {
         document.getElementById('admin-model-price').value = item.price;
         currentModalImages = [...(item.images || [])];
         renderPreviewThumbs();
+        const modalBody = modal.querySelector('.admin-modal-body');
+        if (modalBody) modalBody.scrollTop = 0;
         modal.classList.add('active');
+        document.body.style.overflow = 'hidden';
     }
 
     // Delete Model

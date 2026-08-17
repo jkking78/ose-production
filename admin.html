@@ -72,62 +72,82 @@
     <!-- Modal Formulaire Ajout / Édition Modèle -->
     <div id="admin-model-modal" class="custom-modal">
         <div class="custom-modal-overlay"></div>
-        <div class="custom-modal-content" style="max-width: 550px; border-radius: 20px; padding: 30px;">
-            <span class="close-modal" id="close-admin-modal">&times;</span>
-            <h2 id="admin-modal-title" style="font-size: 1.5rem; font-weight: 800; color: #111; margin-bottom: 20px;">Ajouter un nouveau modèle</h2>
+        <div class="custom-modal-content admin-modal-card">
+            <div class="admin-modal-header">
+                <div class="admin-modal-title-wrap">
+                    <div class="admin-modal-icon-badge">
+                        <i class="ph ph-t-shirt" id="admin-modal-icon"></i>
+                    </div>
+                    <h2 id="admin-modal-title">Ajouter un nouveau modèle</h2>
+                </div>
+                <button type="button" class="btn-close-modal close-modal" id="close-admin-modal" aria-label="Fermer">
+                    <i class="ph ph-x"></i>
+                </button>
+            </div>
 
-            <form id="admin-model-form">
+            <form id="admin-model-form" class="admin-modal-form-wrap">
                 <input type="hidden" id="edit-model-id" value="">
 
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-model-category" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem;">Catégorie</label>
-                    <select id="admin-model-category" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                        <option value="enfant">Toges Enfant</option>
-                        <option value="licence-master">Toges Licence & Master</option>
-                        <option value="doctorat">Toges Doctorat</option>
-                        <option value="international">Universités Privées (International)</option>
-                        <option value="enseignants">Toges Enseignants</option>
-                        <option value="__NEW__">+ Créer une nouvelle catégorie...</option>
-                    </select>
-                    <div id="admin-new-category-wrapper" style="display: none; margin-top: 10px;">
-                        <input type="text" id="admin-new-category-input" placeholder="Nom de la nouvelle catégorie (ex: Accessoires & Écharpes)" style="width: 100%; padding: 12px; border: 1.5px solid #9c4b8b; border-radius: 10px; font-size: 0.95rem;">
+                <div class="admin-modal-body">
+                    <div class="form-group">
+                        <label for="admin-model-category"><i class="ph ph-folder-notch"></i> Catégorie</label>
+                        <select id="admin-model-category" required class="admin-form-input">
+                            <option value="enfant">Toges Enfant</option>
+                            <option value="licence-master">Toges Licence & Master</option>
+                            <option value="doctorat">Toges Doctorat</option>
+                            <option value="international">Universités Privées (International)</option>
+                            <option value="enseignants">Toges Enseignants</option>
+                            <option value="__NEW__">+ Créer une nouvelle catégorie...</option>
+                        </select>
+                        <div id="admin-new-category-wrapper" style="display: none; margin-top: 10px;">
+                            <input type="text" id="admin-new-category-input" placeholder="Nom de la nouvelle catégorie (ex: Accessoires & Écharpes)" class="admin-form-input">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-model-title"><i class="ph ph-tag"></i> Nom du modèle</label>
+                        <input type="text" id="admin-model-title" required placeholder="Ex: Modèle 4" class="admin-form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="admin-model-price"><i class="ph ph-currency-dollar-simple"></i> Prix unitaire (FCFA)</label>
+                        <input type="text" id="admin-model-price" required placeholder="Ex: 65 000 FCFA" class="admin-form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="ph ph-images"></i> Photos du modèle</label>
+                        <div class="upload-dropzone" id="upload-dropzone">
+                            <div class="upload-dropzone-icon">
+                                <i class="ph ph-camera-plus"></i>
+                            </div>
+                            <p class="upload-dropzone-text">Cliquez pour ajouter des photos</p>
+                            <p class="upload-dropzone-sub">Prendre une photo ou choisir dans la galerie (JPG, PNG)</p>
+                            <input type="file" id="admin-file-input" multiple accept="image/*" style="display: none;">
+                        </div>
+
+                        <!-- URL Alternative -->
+                        <div class="admin-url-row">
+                            <input type="text" id="admin-image-url-input" placeholder="Ou coller le lien d'une image (Optionnel)" class="admin-form-input admin-url-input">
+                            <button type="button" id="btn-add-url-img" class="admin-btn-add-url">
+                                <i class="ph ph-plus"></i> Ajouter
+                            </button>
+                        </div>
+
+                        <!-- Photo Previews Grid -->
+                        <div class="preview-grid" id="admin-preview-grid">
+                            <!-- Thumbs inserted here -->
+                        </div>
                     </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-model-title" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem;">Nom du modèle</label>
-                    <input type="text" id="admin-model-title" required placeholder="Ex: Modèle 4" style="width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-modal-cancel close-modal" id="btn-cancel-admin-modal">
+                        Annuler
+                    </button>
+                    <button type="submit" id="btn-save-model" class="btn-modal-save">
+                        <i class="ph ph-check-circle" style="font-size: 1.2rem;"></i> Enregistrer le modèle
+                    </button>
                 </div>
-
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-model-price" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem;">Prix unitaire (FCFA)</label>
-                    <input type="text" id="admin-model-price" required placeholder="Ex: 65 000 FCFA" style="width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                </div>
-
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.9rem;">Photos du modèle</label>
-                    <div class="upload-dropzone" id="upload-dropzone">
-                        <i class="ph ph-image" style="font-size: 2.2rem; color: #9c4b8b; margin-bottom: 8px;"></i>
-                        <p style="font-weight: 600; font-size: 0.95rem; color: #4a5568; margin-bottom: 4px;">Cliquez pour choisir des photos</p>
-                        <p style="font-size: 0.8rem; color: #a0aec0;">Format JPG, PNG (Sélection multiple possible)</p>
-                        <input type="file" id="admin-file-input" multiple accept="image/*" style="display: none;">
-                    </div>
-
-                    <!-- URL Alternative -->
-                    <div style="margin-top: 12px;">
-                        <input type="text" id="admin-image-url-input" placeholder="Ou coller l'URL d'une image (Optionnel)" style="width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 0.85rem;">
-                        <button type="button" id="btn-add-url-img" class="btn-secondary" style="margin-top: 6px; padding: 6px 12px; font-size: 0.8rem;">+ Ajouter l'URL</button>
-                    </div>
-
-                    <!-- Photo Previews Grid -->
-                    <div class="preview-grid" id="admin-preview-grid">
-                        <!-- Thumbs inserted here -->
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; border-radius: 30px; box-shadow: 0 4px 12px rgba(156,75,139,0.3);">
-                    Enregistrer le modèle
-                </button>
             </form>
         </div>
     </div>
@@ -135,73 +155,92 @@
     <!-- Modal Authentification Admin -->
     <div id="admin-login-modal" class="custom-modal active">
         <div class="custom-modal-overlay" style="background: rgba(0,0,0,0.85); backdrop-filter: blur(8px);"></div>
-        <div class="custom-modal-content" style="max-width: 420px; border-radius: 20px; padding: 35px; text-align: center;">
-            <div style="width: 60px; height: 60px; background: #fff5fb; color: #9c4b8b; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 15px;">
-                <i class="ph ph-shield-check"></i>
-            </div>
-            <h2 style="font-size: 1.5rem; font-weight: 800; color: #111; margin-bottom: 8px;">Connexion Administration</h2>
-            <p style="color: #718096; font-size: 0.9rem; margin-bottom: 20px;">Saisissez vos identifiants pour accéder au tableau de bord.</p>
+        <div class="custom-modal-content admin-modal-card admin-modal-auth">
+            <div class="admin-modal-body" style="text-align: center; padding: 35px 25px;">
+                <div class="admin-auth-icon">
+                    <i class="ph ph-shield-check"></i>
+                </div>
+                <h2 style="font-size: 1.5rem; font-weight: 800; color: #111; margin-bottom: 8px;">Connexion Administration</h2>
+                <p style="color: #718096; font-size: 0.9rem; margin-bottom: 20px;">Saisissez vos identifiants pour accéder au tableau de bord.</p>
 
-            <form id="admin-login-form">
-                <div class="form-group" style="margin-bottom: 15px; text-align: left;">
-                    <label for="admin-login-username" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Identifiant</label>
-                    <input type="text" id="admin-login-username" placeholder="Identifiant admin" value="admin" style="width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                </div>
-                <div class="form-group" style="margin-bottom: 20px; text-align: left;">
-                    <label for="admin-login-password" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Mot de passe</label>
-                    <div class="pwd-input-wrapper">
-                        <input type="password" id="admin-login-password" placeholder="Saisir le mot de passe" style="width: 100%; padding: 12px 45px 12px 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                        <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+                <form id="admin-login-form">
+                    <div class="form-group" style="margin-bottom: 15px; text-align: left;">
+                        <label for="admin-login-username" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Identifiant</label>
+                        <input type="text" id="admin-login-username" placeholder="Identifiant admin" value="admin" class="admin-form-input">
                     </div>
-                </div>
-                <div id="admin-login-error" style="display: none; color: #e53e3e; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; padding: 8px 12px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px;">
-                    Identifiant ou mot de passe incorrect.
-                </div>
-                <button type="submit" id="btn-submit-admin-login" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; border-radius: 30px; box-shadow: 0 4px 12px rgba(156,75,139,0.3); cursor: pointer;">
-                    Se connecter
-                </button>
-            </form>
+                    <div class="form-group" style="margin-bottom: 20px; text-align: left;">
+                        <label for="admin-login-password" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Mot de passe</label>
+                        <div class="pwd-input-wrapper">
+                            <input type="password" id="admin-login-password" placeholder="Saisir le mot de passe" class="admin-form-input">
+                            <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+                        </div>
+                    </div>
+                    <div id="admin-login-error" style="display: none; color: #e53e3e; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; padding: 8px 12px; background: #fff5f5; border: 1px solid #fed7d7; border-radius: 8px;">
+                        Identifiant ou mot de passe incorrect.
+                    </div>
+                    <button type="submit" id="btn-submit-admin-login" class="btn-primary" style="width: 100%; min-height: 48px; font-size: 1rem; border-radius: 30px; box-shadow: 0 4px 12px rgba(156,75,139,0.3); cursor: pointer;">
+                        Se connecter
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
     <!-- Modal Modification Identifiant / Mot de passe -->
     <div id="admin-credentials-modal" class="custom-modal">
         <div class="custom-modal-overlay"></div>
-        <div class="custom-modal-content" style="max-width: 450px; border-radius: 20px; padding: 30px;">
-            <span class="close-modal" id="close-credentials-modal">&times;</span>
-            <h2 style="font-size: 1.4rem; font-weight: 800; color: #111; margin-bottom: 15px;">Modifier les accès Admin</h2>
-            <p style="color: #718096; font-size: 0.85rem; margin-bottom: 20px;">Personnalisez votre identifiant et votre mot de passe d'accès au catalogue.</p>
-
-            <form id="admin-credentials-form">
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-new-username" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Nouvel identifiant</label>
-                    <input type="text" id="admin-new-username" required style="width: 100%; padding: 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-current-password" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Mot de passe actuel</label>
-                    <div class="pwd-input-wrapper">
-                        <input type="password" id="admin-current-password" required style="width: 100%; padding: 12px 45px 12px 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                        <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+        <div class="custom-modal-content admin-modal-card">
+            <div class="admin-modal-header">
+                <div class="admin-modal-title-wrap">
+                    <div class="admin-modal-icon-badge">
+                        <i class="ph ph-key"></i>
                     </div>
+                    <h2>Modifier les accès Admin</h2>
                 </div>
-                <div class="form-group" style="margin-bottom: 15px;">
-                    <label for="admin-new-password" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Nouveau mot de passe</label>
-                    <div class="pwd-input-wrapper">
-                        <input type="password" id="admin-new-password" required style="width: 100%; padding: 12px 45px 12px 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                        <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
-                    </div>
-                </div>
-                <div class="form-group" style="margin-bottom: 20px;">
-                    <label for="admin-confirm-password" style="font-weight: 600; display: block; margin-bottom: 6px; font-size: 0.85rem;">Confirmer le nouveau mot de passe</label>
-                    <div class="pwd-input-wrapper">
-                        <input type="password" id="admin-confirm-password" required style="width: 100%; padding: 12px 45px 12px 12px; border: 1px solid #cbd5e0; border-radius: 10px; font-size: 0.95rem;">
-                        <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
-                    </div>
-                </div>
-                <div id="credentials-msg" style="display: none; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px;"></div>
-                <button type="submit" class="btn-primary" style="width: 100%; padding: 14px; font-size: 1rem; border-radius: 30px;">
-                    Mettre à jour mes identifiants
+                <button type="button" class="btn-close-modal close-modal" id="close-credentials-modal" aria-label="Fermer">
+                    <i class="ph ph-x"></i>
                 </button>
+            </div>
+
+            <form id="admin-credentials-form" class="admin-modal-form-wrap">
+                <div class="admin-modal-body">
+                    <p style="color: #718096; font-size: 0.85rem; margin-bottom: 18px;">Personnalisez votre identifiant et votre mot de passe d'accès au catalogue.</p>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="admin-new-username"><i class="ph ph-user"></i> Nouvel identifiant</label>
+                        <input type="text" id="admin-new-username" required class="admin-form-input">
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="admin-current-password"><i class="ph ph-lock-key"></i> Mot de passe actuel</label>
+                        <div class="pwd-input-wrapper">
+                            <input type="password" id="admin-current-password" required class="admin-form-input">
+                            <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="admin-new-password"><i class="ph ph-lock"></i> Nouveau mot de passe</label>
+                        <div class="pwd-input-wrapper">
+                            <input type="password" id="admin-new-password" required class="admin-form-input">
+                            <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+                        </div>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="admin-confirm-password"><i class="ph ph-lock-simple-open"></i> Confirmer le nouveau mot de passe</label>
+                        <div class="pwd-input-wrapper">
+                            <input type="password" id="admin-confirm-password" required class="admin-form-input">
+                            <button type="button" class="btn-toggle-pwd" aria-label="Afficher le mot de passe"><i class="ph ph-eye"></i></button>
+                        </div>
+                    </div>
+                    <div id="credentials-msg" style="display: none; font-size: 0.85rem; font-weight: 600; margin-bottom: 15px; padding: 10px; border-radius: 8px;"></div>
+                </div>
+
+                <div class="admin-modal-footer">
+                    <button type="button" class="btn-modal-cancel close-modal" id="btn-cancel-creds-modal">
+                        Annuler
+                    </button>
+                    <button type="submit" class="btn-primary btn-modal-save">
+                        <i class="ph ph-check-circle" style="font-size: 1.15rem;"></i> Mettre à jour
+                    </button>
+                </div>
             </form>
         </div>
     </div>
