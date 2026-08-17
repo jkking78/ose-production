@@ -1467,20 +1467,72 @@ function submitQuoteForm(e) {
 
 const DEFAULT_CATALOG = {
     "enfant": [
-        { id: "enfant-model-1", model: "Modèle 1", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05 2.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 2.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 3.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05.jpg"] },
-        { id: "enfant-model-2", model: "Modèle 2", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 3.jpg", "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06.jpg", "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 2.jpg"] },
-        { id: "enfant-model-3", model: "Modèle 3", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10.jpg", "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10 2.jpg", "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-11.jpg"] }
+        { 
+            id: "enfant-model-1", 
+            model: "Modèle 1", 
+            categoryTitle: "Collection Toges Enfant", 
+            price: "25 000 FCFA", 
+            images: [
+                "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05 2.jpg", 
+                "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04.jpg", 
+                "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 2.jpg", 
+                "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 3.jpg", 
+                "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05.jpg"
+            ] 
+        },
+        { 
+            id: "enfant-model-2", 
+            model: "Modèle 2", 
+            categoryTitle: "Collection Toges Enfant", 
+            price: "25 000 FCFA", 
+            images: [
+                "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 3.jpg", 
+                "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06.jpg", 
+                "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 2.jpg"
+            ] 
+        },
+        { 
+            id: "enfant-model-3", 
+            model: "Modèle 3 - Couverture Spéciale Noël", 
+            categoryTitle: "Collection Toges Enfant", 
+            price: "25 000 FCFA", 
+            images: [
+                "assets/toge-enfant/PHOTO-2026-07-03-21-31-05 3.jpg"
+            ] 
+        },
+        { 
+            id: "enfant-model-4", 
+            model: "Modèle 4 - Affiches & Couvertures", 
+            categoryTitle: "Collection Toges Enfant", 
+            price: "25 000 FCFA", 
+            images: [
+                "assets/toge-enfant/PHOTO-2026-07-03-21-31-06 5.jpg", 
+                "assets/toge-enfant/PHOTO-2026-07-03-21-31-06 4.jpg"
+            ] 
+        },
+        { 
+            id: "enfant-model-5", 
+            model: "Modèle 5", 
+            categoryTitle: "Collection Toges Enfant", 
+            price: "25 000 FCFA", 
+            images: [
+                "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10.jpg", 
+                "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10 2.jpg", 
+                "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-11.jpg"
+            ] 
+        }
     ],
     "licence-master": [
         { id: "licence-master-model-1", model: "Modèle 1", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-30 2.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-32 4.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-30.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-31.jpg"] },
         { id: "licence-master-model-2", model: "Modèle 2", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/model 2/PHOTO-2026-07-03-21-35-28 3.jpg", "assets/toge-licence-master/model 2/PHOTO-2026-07-03-21-35-28 2.jpg"] },
         { id: "licence-master-model-3", model: "Modèle 3", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 3/PHOTO-2026-07-03-21-35-29 3.jpg", "assets/toge-licence-master/Model 3/PHOTO-2026-07-03-21-35-29 2.jpg"] },
-        { id: "licence-master-model-4", model: "Modèle 4", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 3.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 2.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 2.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 3.jpg"] },
-        { id: "licence-master-model-5", model: "Modèle 5", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33 2.jpg", "assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33.jpg"] },
-        { id: "licence-master-model-6", model: "Modèle 6", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 6/PHOTO-2026-07-03-21-35-32.jpg"] },
-        { id: "licence-master-model-7", model: "Modèle 7", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 7/PHOTO-2026-07-03-21-35-29.jpg"] },
-        { id: "licence-master-model-8", model: "Modèle 8", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 8/PHOTO-2026-07-03-21-35-28.jpg"] },
-        { id: "licence-master-model-9", model: "Modèle 9", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 3.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-15.jpg"] }
+        { id: "licence-master-model-4", model: "Modèle 4", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 3.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 2.jpg"] },
+        { id: "licence-master-model-5", model: "Modèle 5", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 2.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 3.jpg"] },
+        { id: "licence-master-model-6", model: "Modèle 6", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33 2.jpg", "assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33.jpg"] },
+        { id: "licence-master-model-7", model: "Modèle 7", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 6/PHOTO-2026-07-03-21-35-32.jpg"] },
+        { id: "licence-master-model-8", model: "Modèle 8", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 7/PHOTO-2026-07-03-21-35-29.jpg"] },
+        { id: "licence-master-model-9", model: "Modèle 9", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 8/PHOTO-2026-07-03-21-35-28.jpg"] },
+        { id: "licence-master-model-10", model: "Modèle 10", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 3.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-15.jpg"] }
     ],
     "doctorat": [
         { id: "doctorat-model-1", model: "Modèle Doctorat 1", categoryTitle: "Collection Toges Doctorat", price: "125 000 FCFA", images: ["assets/toges-doctorants/PHOTO-2026-07-03-21-46-00.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-46-00 2.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-46-00 3.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-45-59.jpg"] }
@@ -1495,21 +1547,49 @@ const DEFAULT_CATALOG = {
 
 function getStoredCatalog() {
     try {
-        const saved = localStorage.getItem('ose_catalog_data');
+        const saved = localStorage.getItem('ose_catalog_data_v4');
         if (saved) {
             const parsed = JSON.parse(saved);
             if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
                 return parsed;
             }
         }
+
+        // Migrate from old storage or merge defaults
+        const oldSaved = localStorage.getItem('ose_catalog_data');
+        if (oldSaved) {
+            const oldParsed = JSON.parse(oldSaved);
+            const merged = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+            Object.keys(oldParsed).forEach(cat => {
+                if (!merged[cat]) {
+                    merged[cat] = oldParsed[cat];
+                } else {
+                    oldParsed[cat].forEach(oldItem => {
+                        const existingIdx = merged[cat].findIndex(m => m.id === oldItem.id);
+                        if (existingIdx >= 0) {
+                            merged[cat][existingIdx] = oldItem;
+                        } else {
+                            merged[cat].push(oldItem);
+                        }
+                    });
+                }
+            });
+            localStorage.setItem('ose_catalog_data_v4', JSON.stringify(merged));
+            return merged;
+        }
     } catch (e) {
         console.error('Error reading saved catalog:', e);
     }
-    return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+    const def = JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+    try {
+        localStorage.setItem('ose_catalog_data_v4', JSON.stringify(def));
+    } catch(e){}
+    return def;
 }
 
 function saveStoredCatalog(catalog) {
     try {
+        localStorage.setItem('ose_catalog_data_v4', JSON.stringify(catalog));
         localStorage.setItem('ose_catalog_data', JSON.stringify(catalog));
     } catch (e) {
         console.error('Error saving catalog to localStorage:', e);
