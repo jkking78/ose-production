@@ -56,8 +56,8 @@ def generate_page(cat, index):
                     <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Couleur : <strong>Assortie</strong></div>
                     <div style="display: inline-block; background: #9c4b8b; color: white; padding: 2px 8px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase;">PREMIUM</div>
                     
-                    <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #111; margin: 0 0 5px 0;">Modèle {i + 1}</h3>
-                    <p style="font-size: 1rem; color: #333; margin-bottom: 5px;">{cat['title']}</p>
+                    <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #111; margin: 0 0 5px 0;">{cat['title']}</h3>
+                    <p style="font-size: 1.05rem; font-weight: 400; color: #666; margin-bottom: 10px;">Modèle {i + 1}</p>
                     <div class="btn-description" style="text-decoration: underline; font-size: 0.9rem; color: #555; margin-bottom: 15px; cursor: pointer;">Description détaillée</div>
                     
                     <div class="item-price" style="font-size: 1.4rem; font-weight: 700; color: #d00000;">{cat['price']}</div>

@@ -76,13 +76,15 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Navbar Scroll Effect ---
     const navbar = document.querySelector('.navbar');
     
-    window.addEventListener('scroll', () => {
-        if (window.scrollY > 50) {
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.classList.remove('scrolled');
-        }
-    });
+    if (navbar) {
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+    }
 
     // --- Intersection Observer for Fade-in Animations ---
     const observerOptions = {
@@ -168,6 +170,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const lightboxPrev = document.querySelector('.lightbox-prev');
     const lightboxNext = document.querySelector('.lightbox-next');
     const lightboxCounter = document.querySelector('.lightbox-counter');
+
+    if (!lightbox) return; // Not on a page with lightbox, exit early from this DOMContentLoaded block
     
     let currentImages = [];
     let currentIndex = 0;
@@ -1292,3 +1296,817 @@ function submitQuoteForm(e) {
     closeQuoteModal();
     window.open(waUrl, '_blank');
 }
+
+// ==========================================
+// DYNAMIC CATALOG & ADMIN DASHBOARD ENGINE
+// ==========================================
+
+const DEFAULT_CATALOG = {
+    "enfant": [
+        { id: "enfant-model-1", model: "Modèle 1", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05 2.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 2.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-04 3.jpg", "assets/toge-enfant/model 1/PHOTO-2026-07-03-21-31-05.jpg"] },
+        { id: "enfant-model-2", model: "Modèle 2", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 3.jpg", "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06.jpg", "assets/toge-enfant/model 2/PHOTO-2026-07-03-21-31-06 2.jpg"] },
+        { id: "enfant-model-3", model: "Modèle 3", categoryTitle: "Collection Toges Enfant", price: "25 000 FCFA", images: ["assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10.jpg", "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-10 2.jpg", "assets/toge-enfant/model 3/PHOTO-2026-07-27-23-26-11.jpg"] }
+    ],
+    "licence-master": [
+        { id: "licence-master-model-1", model: "Modèle 1", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-30 2.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-32 4.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-30.jpg", "assets/toge-licence-master/Model 1/PHOTO-2026-07-03-21-35-31.jpg"] },
+        { id: "licence-master-model-2", model: "Modèle 2", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/model 2/PHOTO-2026-07-03-21-35-28 3.jpg", "assets/toge-licence-master/model 2/PHOTO-2026-07-03-21-35-28 2.jpg"] },
+        { id: "licence-master-model-3", model: "Modèle 3", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 3/PHOTO-2026-07-03-21-35-29 3.jpg", "assets/toge-licence-master/Model 3/PHOTO-2026-07-03-21-35-29 2.jpg"] },
+        { id: "licence-master-model-4", model: "Modèle 4", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 3.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-32 2.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 2.jpg", "assets/toge-licence-master/Model 4/PHOTO-2026-07-03-21-35-31 3.jpg"] },
+        { id: "licence-master-model-5", model: "Modèle 5", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33 2.jpg", "assets/toge-licence-master/Model 5/PHOTO-2026-07-03-21-35-33.jpg"] },
+        { id: "licence-master-model-6", model: "Modèle 6", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 6/PHOTO-2026-07-03-21-35-32.jpg"] },
+        { id: "licence-master-model-7", model: "Modèle 7", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 7/PHOTO-2026-07-03-21-35-29.jpg"] },
+        { id: "licence-master-model-8", model: "Modèle 8", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/Model 8/PHOTO-2026-07-03-21-35-28.jpg"] },
+        { id: "licence-master-model-9", model: "Modèle 9", categoryTitle: "Collection Toges Licence & Master", price: "60 000 FCFA", images: ["assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-13 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 2.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-14 3.jpg", "assets/toge-licence-master/model 9/PHOTO-2026-07-27-23-26-15.jpg"] }
+    ],
+    "doctorat": [
+        { id: "doctorat-model-1", model: "Modèle Doctorat 1", categoryTitle: "Collection Toges Doctorat", price: "125 000 FCFA", images: ["assets/toges-doctorants/PHOTO-2026-07-03-21-46-00.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-46-00 2.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-46-00 3.jpg", "assets/toges-doctorants/PHOTO-2026-07-03-21-45-59.jpg"] }
+    ],
+    "international": [
+        { id: "international-model-1", model: "Modèle International 1", categoryTitle: "Universités Privées", price: "200 000 FCFA", images: ["assets/toges-international/PHOTO-2026-07-03-22-03-42 2.jpg", "assets/toges-international/PHOTO-2026-07-03-22-03-41.jpg", "assets/toges-international/PHOTO-2026-07-03-22-03-42.jpg"] }
+    ],
+    "enseignants": [
+        { id: "enseignants-model-1", model: "Modèle Enseignant 1", categoryTitle: "Collection Toges Enseignants", price: "150 000 FCFA", images: ["assets/toges-enseignants/PHOTO-2026-07-27-23-26-13 3.jpg", "assets/toges-enseignants/PHOTO-2026-07-27-23-26-15 2.jpg"] }
+    ]
+};
+
+function getStoredCatalog() {
+    try {
+        const saved = localStorage.getItem('ose_catalog_data');
+        if (saved) {
+            const parsed = JSON.parse(saved);
+            if (parsed && typeof parsed === 'object' && Object.keys(parsed).length > 0) {
+                return parsed;
+            }
+        }
+    } catch (e) {
+        console.error('Error reading saved catalog:', e);
+    }
+    return JSON.parse(JSON.stringify(DEFAULT_CATALOG));
+}
+
+function saveStoredCatalog(catalog) {
+    try {
+        localStorage.setItem('ose_catalog_data', JSON.stringify(catalog));
+    } catch (e) {
+        console.error('Error saving catalog to localStorage:', e);
+    }
+}
+
+// Global Category titles mapping
+const DEFAULT_CATEGORY_TITLES = {
+    'enfant': 'Collection Toges Enfant',
+    'licence-master': 'Collection Toges Licence & Master',
+    'doctorat': 'Collection Toges Doctorat',
+    'international': 'Universités Privées',
+    'enseignants': 'Collection Toges Enseignants'
+};
+
+function getCategoryTitles() {
+    try {
+        const saved = localStorage.getItem('ose_category_titles');
+        if (saved) {
+            return { ...DEFAULT_CATEGORY_TITLES, ...JSON.parse(saved) };
+        }
+    } catch (e) {
+        console.error('Error loading category titles:', e);
+    }
+    return { ...DEFAULT_CATEGORY_TITLES };
+}
+
+function saveCategoryTitle(key, title) {
+    try {
+        const titles = getCategoryTitles();
+        titles[key] = title;
+        localStorage.setItem('ose_category_titles', JSON.stringify(titles));
+    } catch (e) {
+        console.error('Error saving category title:', e);
+    }
+}
+
+function slugify(text) {
+    return text.toString().toLowerCase()
+        .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // remove accents
+        .replace(/\s+/g, '-')           // Replace spaces with -
+        .replace(/[^\w\-]+/g, '')       // Remove all non-word chars
+        .replace(/\-\-+/g, '-')         // Replace multiple - with single -
+        .replace(/^-+/, '')             // Trim - from start of text
+        .replace(/-+$/, '');            // Trim - from end of text
+}
+
+// --- ADMIN AUTH & CREDENTIALS ENGINE (SECURED) ---
+
+// Hash function (SHA-256) - never store plain text passwords
+async function hashPassword(password) {
+    const encoder = new TextEncoder();
+    const data = encoder.encode(password + '_ose_salt_2026');
+    const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+// Pre-computed hash of default password 'ose' with salt
+const DEFAULT_PASS_HASH = ''; // Will be computed on first run
+
+const DEFAULT_ADMIN_CREDENTIALS = {
+    username: 'admin',
+    passwordHash: '' // computed at runtime
+};
+
+// Initialize default hash on load
+(async function initDefaultHash() {
+    const h = await hashPassword('ose');
+    DEFAULT_ADMIN_CREDENTIALS.passwordHash = h;
+})();
+
+function getAdminCredentials() {
+    try {
+        const saved = localStorage.getItem('ose_admin_credentials_v2');
+        if (saved) return JSON.parse(saved);
+    } catch (e) {
+        console.error('Error reading admin credentials:', e);
+    }
+    return { ...DEFAULT_ADMIN_CREDENTIALS };
+}
+
+async function saveAdminCredentials(username, plainPassword) {
+    try {
+        const hashed = await hashPassword(plainPassword);
+        const creds = { username: username || 'admin', passwordHash: hashed };
+        localStorage.setItem('ose_admin_credentials_v2', JSON.stringify(creds));
+        return creds;
+    } catch (e) {
+        console.error('Error saving admin credentials:', e);
+    }
+}
+
+// --- Brute-Force Protection ---
+const MAX_LOGIN_ATTEMPTS = 5;
+const LOCKOUT_DURATION_MS = 30000; // 30 seconds
+
+function getLoginAttempts() {
+    try {
+        const data = JSON.parse(sessionStorage.getItem('ose_login_attempts') || '{}');
+        return data;
+    } catch (e) { return {}; }
+}
+
+function recordFailedAttempt() {
+    const data = getLoginAttempts();
+    data.count = (data.count || 0) + 1;
+    data.lastAttempt = Date.now();
+    if (data.count >= MAX_LOGIN_ATTEMPTS) {
+        data.lockedUntil = Date.now() + LOCKOUT_DURATION_MS;
+    }
+    sessionStorage.setItem('ose_login_attempts', JSON.stringify(data));
+    return data;
+}
+
+function clearLoginAttempts() {
+    sessionStorage.removeItem('ose_login_attempts');
+}
+
+function isLoginLocked() {
+    const data = getLoginAttempts();
+    if (data.lockedUntil && Date.now() < data.lockedUntil) {
+        return Math.ceil((data.lockedUntil - Date.now()) / 1000);
+    }
+    if (data.lockedUntil && Date.now() >= data.lockedUntil) {
+        clearLoginAttempts();
+    }
+    return 0;
+}
+
+// --- Session Auth ---
+function isSessionAuthenticated() {
+    return sessionStorage.getItem('ose_admin_logged_in') === 'true';
+}
+
+function setSessionAuthenticated(isAuth) {
+    if (isAuth) {
+        sessionStorage.setItem('ose_admin_logged_in', 'true');
+        clearLoginAttempts();
+    } else {
+        sessionStorage.removeItem('ose_admin_logged_in');
+    }
+}
+
+// Toggle Password Visibility Handler
+document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.btn-toggle-pwd');
+    if (!btn) return;
+
+    e.preventDefault();
+    e.stopPropagation();
+
+    const wrapper = btn.closest('.pwd-input-wrapper');
+    if (!wrapper) return;
+
+    const input = wrapper.querySelector('input');
+    if (!input) return;
+
+    if (input.type === 'password') {
+        input.type = 'text';
+        btn.innerHTML = '<i class="ph ph-eye-slash"></i>';
+        btn.setAttribute('aria-label', 'Masquer le mot de passe');
+    } else {
+        input.type = 'password';
+        btn.innerHTML = '<i class="ph ph-eye"></i>';
+        btn.setAttribute('aria-label', 'Afficher le mot de passe');
+    }
+});
+
+// Admin UI Initialization
+let currentModalImages = [];
+
+function initAdminPage() {
+    const adminGrid = document.getElementById('admin-products-grid');
+    if (!adminGrid) return; // Not on admin page
+
+    const tabsContainer = document.getElementById('admin-category-tabs');
+    const modal = document.getElementById('admin-model-modal');
+    const btnOpenModal = document.getElementById('btn-open-add-modal');
+    const btnCloseModal = document.getElementById('close-admin-modal');
+    const adminForm = document.getElementById('admin-model-form');
+    const dropzone = document.getElementById('upload-dropzone');
+    const fileInput = document.getElementById('admin-file-input');
+    const addUrlBtn = document.getElementById('btn-add-url-img');
+    const urlInput = document.getElementById('admin-image-url-input');
+    const previewGrid = document.getElementById('admin-preview-grid');
+    const btnReset = document.getElementById('btn-reset-catalog');
+    const categorySelect = document.getElementById('admin-model-category');
+    const newCategoryWrapper = document.getElementById('admin-new-category-wrapper');
+    const newCategoryInput = document.getElementById('admin-new-category-input');
+
+    // --- Authentication Elements ---
+    const loginModal = document.getElementById('admin-login-modal');
+    const loginForm = document.getElementById('admin-login-form');
+    const loginError = document.getElementById('admin-login-error');
+    const headerBar = document.getElementById('admin-header-bar');
+    const mainContent = document.getElementById('admin-main-content');
+
+    // Credentials Modal Elements
+    const btnChangeCreds = document.getElementById('btn-change-credentials');
+    const credsModal = document.getElementById('admin-credentials-modal');
+    const closeCredsModal = document.getElementById('close-credentials-modal');
+    const credsForm = document.getElementById('admin-credentials-form');
+    const credsMsg = document.getElementById('credentials-msg');
+
+    // --- Authentication Guard ---
+    function checkAuthentication() {
+        if (isSessionAuthenticated()) {
+            // Logged in: show admin, hide login
+            if (headerBar) headerBar.style.display = 'flex';
+            if (mainContent) mainContent.style.display = 'block';
+            if (loginModal) {
+                loginModal.style.display = 'none';
+                loginModal.classList.remove('active');
+            }
+            renderAdminGrid();
+        } else {
+            // Not logged in: hide admin, show login
+            if (headerBar) headerBar.style.display = 'none';
+            if (mainContent) mainContent.style.display = 'none';
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+                loginModal.classList.add('active');
+            }
+        }
+    }
+
+    // --- Login Handler (secured with hash + brute-force protection) ---
+    async function performAdminLogin() {
+        // Check lockout
+        const lockSeconds = isLoginLocked();
+        if (lockSeconds > 0) {
+            if (loginError) {
+                loginError.textContent = `Trop de tentatives. Réessayez dans ${lockSeconds} secondes.`;
+                loginError.style.display = 'block';
+            }
+            return;
+        }
+
+        const uInput = document.getElementById('admin-login-username');
+        const pInput = document.getElementById('admin-login-password');
+        const u = uInput ? uInput.value.trim() : '';
+        const p = pInput ? pInput.value.trim() : '';
+
+        if (!p) {
+            if (loginError) {
+                loginError.textContent = 'Veuillez saisir votre mot de passe.';
+                loginError.style.display = 'block';
+            }
+            if (pInput) pInput.focus();
+            return;
+        }
+
+        const currentCreds = getAdminCredentials();
+        const inputHash = await hashPassword(p);
+
+        const isUserValid = !u || u.toLowerCase() === 'admin' || u.toLowerCase() === (currentCreds.username || 'admin').toLowerCase();
+        const isPassValid = inputHash === currentCreds.passwordHash;
+
+        if (isUserValid && isPassValid) {
+            setSessionAuthenticated(true);
+            if (loginError) loginError.style.display = 'none';
+            if (pInput) pInput.value = '';
+            checkAuthentication();
+        } else {
+            const attempts = recordFailedAttempt();
+            const remaining = MAX_LOGIN_ATTEMPTS - attempts.count;
+            if (remaining > 0) {
+                loginError.textContent = `Identifiant ou mot de passe incorrect. ${remaining} tentative${remaining > 1 ? 's' : ''} restante${remaining > 1 ? 's' : ''}.`;
+            } else {
+                loginError.textContent = `Compte bloqué pendant 30 secondes.`;
+            }
+            if (loginError) loginError.style.display = 'block';
+        }
+    }
+
+    // Login form submit
+    if (loginForm) {
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            performAdminLogin();
+        });
+    }
+
+    // --- Logout Handler ---
+    const btnLogout = document.getElementById('btn-admin-logout');
+    if (btnLogout) {
+        btnLogout.addEventListener('click', () => {
+            setSessionAuthenticated(false);
+            window.location.href = 'index.html';
+        });
+    }
+
+    // --- Credentials Modal ---
+    if (btnChangeCreds && credsModal) {
+        btnChangeCreds.addEventListener('click', () => {
+            const creds = getAdminCredentials();
+            document.getElementById('admin-new-username').value = creds.username;
+            document.getElementById('admin-current-password').value = '';
+            document.getElementById('admin-new-password').value = '';
+            document.getElementById('admin-confirm-password').value = '';
+            if (credsMsg) credsMsg.style.display = 'none';
+            credsModal.classList.add('active');
+        });
+    }
+
+    if (closeCredsModal && credsModal) {
+        closeCredsModal.addEventListener('click', () => {
+            credsModal.classList.remove('active');
+        });
+    }
+
+    if (credsForm) {
+        credsForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const newU = document.getElementById('admin-new-username').value.trim();
+            const currentP = document.getElementById('admin-current-password').value;
+            const newP = document.getElementById('admin-new-password').value;
+            const confirmP = document.getElementById('admin-confirm-password').value;
+            const creds = getAdminCredentials();
+
+            if (currentP !== creds.password && currentP !== 'ose') {
+                if (credsMsg) {
+                    credsMsg.style.color = '#e53e3e';
+                    credsMsg.textContent = 'Le mot de passe actuel est incorrect.';
+                    credsMsg.style.display = 'block';
+                }
+                return;
+            }
+
+            if (newP !== confirmP) {
+                if (credsMsg) {
+                    credsMsg.style.color = '#e53e3e';
+                    credsMsg.textContent = 'Les nouveaux mots de passe ne correspondent pas.';
+                    credsMsg.style.display = 'block';
+                }
+                return;
+            }
+
+            saveAdminCredentials({ username: newU || 'admin', password: newP });
+            if (credsMsg) {
+                credsMsg.style.color = '#38a169';
+                credsMsg.textContent = 'Identifiants mis à jour avec succès !';
+                credsMsg.style.display = 'block';
+            }
+            setTimeout(() => {
+                if (credsModal) credsModal.classList.remove('active');
+            }, 1200);
+        });
+    }
+
+    let activeCategory = 'all';
+
+    function populateCategorySelect() {
+        if (!categorySelect) return;
+        const titles = getCategoryTitles();
+        let optionsHtml = '';
+        Object.keys(titles).forEach(catKey => {
+            optionsHtml += `<option value="${catKey}">${titles[catKey]}</option>`;
+        });
+        optionsHtml += `<option value="__NEW__">+ Créer une nouvelle catégorie...</option>`;
+        categorySelect.innerHTML = optionsHtml;
+    }
+
+    if (categorySelect && newCategoryWrapper) {
+        categorySelect.addEventListener('change', (e) => {
+            if (e.target.value === '__NEW__') {
+                newCategoryWrapper.style.display = 'block';
+                if (newCategoryInput) newCategoryInput.focus();
+            } else {
+                newCategoryWrapper.style.display = 'none';
+            }
+        });
+    }
+
+    function renderAdminTabs() {
+        if (!tabsContainer) return;
+        const catalog = getStoredCatalog();
+        const titles = getCategoryTitles();
+        const activeKeys = Object.keys(catalog);
+
+        let tabsHtml = `<button class="admin-tab ${activeCategory === 'all' ? 'active' : ''}" data-cat="all">Toutes les catégories</button>`;
+        activeKeys.forEach(key => {
+            const label = titles[key] || key;
+            tabsHtml += `<button class="admin-tab ${activeCategory === key ? 'active' : ''}" data-cat="${key}">${label}</button>`;
+        });
+        tabsContainer.innerHTML = tabsHtml;
+    }
+
+    function renderAdminGrid() {
+        renderAdminTabs();
+        populateCategorySelect();
+        const catalog = getStoredCatalog();
+        const titles = getCategoryTitles();
+        adminGrid.innerHTML = '';
+
+        let itemsToRender = [];
+        if (activeCategory === 'all') {
+            Object.keys(catalog).forEach(cat => {
+                catalog[cat].forEach(item => {
+                    itemsToRender.push({ ...item, categoryKey: cat });
+                });
+            });
+        } else if (catalog[activeCategory]) {
+            catalog[activeCategory].forEach(item => {
+                itemsToRender.push({ ...item, categoryKey: activeCategory });
+            });
+        }
+
+        if (itemsToRender.length === 0) {
+            adminGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 40px; background: white; border-radius: 16px; color: #718096;">Aucun modèle trouvé dans cette catégorie. Cliquez sur <strong>+ Ajouter un modèle</strong>.</div>`;
+            return;
+        }
+
+        itemsToRender.forEach(item => {
+            const card = document.createElement('div');
+            card.className = 'admin-card';
+            const firstImg = item.images && item.images.length > 0 ? item.images[0] : 'assets/toge1.jpg';
+            const imgCount = item.images ? item.images.length : 0;
+
+            card.innerHTML = `
+                <div class="admin-card-img">
+                    <img src="${firstImg}" alt="${item.model}" loading="lazy">
+                    <div class="admin-card-badge">${imgCount} photo${imgCount > 1 ? 's' : ''}</div>
+                </div>
+                <div class="admin-card-body">
+                    <div class="admin-card-category">${item.categoryTitle || titles[item.categoryKey] || item.categoryKey}</div>
+                    <div class="admin-card-title">${item.model}</div>
+                    <div class="admin-card-price">${item.price}</div>
+                    <div class="admin-card-actions">
+                        <button class="btn-admin-edit" data-id="${item.id}" data-cat="${item.categoryKey}">
+                            <i class="ph ph-pencil-simple"></i> Modifier
+                        </button>
+                        <button class="btn-admin-delete" data-id="${item.id}" data-cat="${item.categoryKey}">
+                            <i class="ph ph-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            adminGrid.appendChild(card);
+        });
+
+        // Add event listeners for edit and delete buttons
+        adminGrid.querySelectorAll('.btn-admin-edit').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const cat = btn.getAttribute('data-cat');
+                openEditModal(cat, id);
+            });
+        });
+
+        adminGrid.querySelectorAll('.btn-admin-delete').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const id = btn.getAttribute('data-id');
+                const cat = btn.getAttribute('data-cat');
+                if (confirm('Voulez-vous vraiment supprimer ce modèle ?')) {
+                    deleteModel(cat, id);
+                }
+            });
+        });
+    }
+
+    // Category Tabs click listener
+    if (tabsContainer) {
+        tabsContainer.addEventListener('click', (e) => {
+            if (e.target.classList.contains('admin-tab')) {
+                tabsContainer.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+                e.target.classList.add('active');
+                activeCategory = e.target.getAttribute('data-cat');
+                renderAdminGrid();
+            }
+        });
+    }
+
+    // Render Preview Thumbnails in Modal
+    function renderPreviewThumbs() {
+        previewGrid.innerHTML = '';
+        currentModalImages.forEach((imgSrc, index) => {
+            const item = document.createElement('div');
+            item.className = 'preview-thumb-item';
+            item.innerHTML = `
+                <img src="${imgSrc}" alt="Miniature ${index + 1}">
+                <button type="button" class="preview-thumb-remove" data-index="${index}">&times;</button>
+            `;
+            previewGrid.appendChild(item);
+        });
+
+        previewGrid.querySelectorAll('.preview-thumb-remove').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const idx = parseInt(e.target.getAttribute('data-index'));
+                currentModalImages.splice(idx, 1);
+                renderPreviewThumbs();
+            });
+        });
+    }
+
+    // Upload Dropzone Click & File handling
+    if (dropzone && fileInput) {
+        dropzone.addEventListener('click', () => fileInput.click());
+
+        fileInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+            if (files.length === 0) return;
+
+            let loaded = 0;
+            files.forEach(file => {
+                const reader = new FileReader();
+                reader.onload = (event) => {
+                    currentModalImages.push(event.target.result);
+                    loaded++;
+                    if (loaded === files.length) {
+                        renderPreviewThumbs();
+                    }
+                };
+                reader.readAsDataURL(file);
+            });
+            fileInput.value = ''; // Reset input
+        });
+    }
+
+    // Add Image from URL
+    if (addUrlBtn && urlInput) {
+        addUrlBtn.addEventListener('click', () => {
+            const url = urlInput.value.trim();
+            if (url) {
+                currentModalImages.push(url);
+                urlInput.value = '';
+                renderPreviewThumbs();
+            }
+        });
+    }
+
+    // Open Modal for Add
+    if (btnOpenModal) {
+        btnOpenModal.addEventListener('click', () => {
+            populateCategorySelect();
+            document.getElementById('admin-modal-title').textContent = "Ajouter un nouveau modèle";
+            document.getElementById('edit-model-id').value = "";
+            adminForm.reset();
+            if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
+            currentModalImages = [];
+            renderPreviewThumbs();
+            modal.classList.add('active');
+        });
+    }
+
+    // Close Modal
+    function closeModal() {
+        modal.classList.remove('active');
+        if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
+    }
+    if (btnCloseModal) btnCloseModal.addEventListener('click', closeModal);
+
+    // Open Modal for Edit
+    function openEditModal(categoryKey, modelId) {
+        populateCategorySelect();
+        const catalog = getStoredCatalog();
+        const models = catalog[categoryKey] || [];
+        const item = models.find(m => m.id === modelId);
+        if (!item) return;
+
+        document.getElementById('admin-modal-title').textContent = "Modifier le modèle";
+        document.getElementById('edit-model-id').value = item.id;
+        document.getElementById('admin-model-category').value = categoryKey;
+        if (newCategoryWrapper) newCategoryWrapper.style.display = 'none';
+        document.getElementById('admin-model-title').value = item.model;
+        document.getElementById('admin-model-price').value = item.price;
+        currentModalImages = [...(item.images || [])];
+        renderPreviewThumbs();
+        modal.classList.add('active');
+    }
+
+    // Delete Model
+    function deleteModel(categoryKey, modelId) {
+        const catalog = getStoredCatalog();
+        if (catalog[categoryKey]) {
+            catalog[categoryKey] = catalog[categoryKey].filter(m => m.id !== modelId);
+            if (catalog[categoryKey].length === 0 && !DEFAULT_CATALOG[categoryKey]) {
+                delete catalog[categoryKey]; // Remove custom category if empty
+            }
+            saveStoredCatalog(catalog);
+            renderAdminGrid();
+            refreshShopPagesIfActive();
+        }
+    }
+
+    // Save/Submit Form
+    if (adminForm) {
+        adminForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const editId = document.getElementById('edit-model-id').value;
+            let categoryKey = document.getElementById('admin-model-category').value;
+            const title = document.getElementById('admin-model-title').value.trim();
+            const price = document.getElementById('admin-model-price').value.trim();
+
+            if (categoryKey === '__NEW__') {
+                const newCatTitle = newCategoryInput ? newCategoryInput.value.trim() : '';
+                if (!newCatTitle) {
+                    alert('Veuillez saisir le nom de la nouvelle catégorie.');
+                    return;
+                }
+                categoryKey = slugify(newCatTitle);
+                saveCategoryTitle(categoryKey, newCatTitle);
+            }
+
+            if (currentModalImages.length === 0) {
+                alert('Veuillez ajouter au moins une photo pour ce modèle.');
+                return;
+            }
+
+            const catalog = getStoredCatalog();
+            const titles = getCategoryTitles();
+            if (!catalog[categoryKey]) catalog[categoryKey] = [];
+
+            const catTitleName = titles[categoryKey] || title;
+
+            if (editId) {
+                // Edit existing
+                const idx = catalog[categoryKey].findIndex(m => m.id === editId);
+                if (idx !== -1) {
+                    catalog[categoryKey][idx] = {
+                        id: editId,
+                        model: title,
+                        categoryTitle: catTitleName,
+                        price: price,
+                        images: currentModalImages
+                    };
+                }
+            } else {
+                // Add new model
+                const newId = `${categoryKey}-model-${Date.now()}`;
+                catalog[categoryKey].push({
+                    id: newId,
+                    model: title,
+                    categoryTitle: catTitleName,
+                    price: price,
+                    images: currentModalImages
+                });
+            }
+
+            saveStoredCatalog(catalog);
+            closeModal();
+            renderAdminGrid();
+            refreshShopPagesIfActive();
+        });
+    }
+
+    // Reset Catalog
+    if (btnReset) {
+        btnReset.addEventListener('click', () => {
+            if (confirm('Voulez-vous réinitialiser l\'ensemble du catalogue aux modèles par défaut ?')) {
+                localStorage.removeItem('ose_catalog_data');
+                localStorage.removeItem('ose_category_titles');
+                activeCategory = 'all';
+                renderAdminGrid();
+                refreshShopPagesIfActive();
+            }
+        });
+    }
+
+    // Run auth check on page load
+    checkAuthentication();
+}
+
+// Function to dynamically update shop category pages when custom items exist
+function renderDynamicCategoryPage() {
+    const categoryGrid = document.getElementById('category-grid');
+    if (!categoryGrid) return; // Not on a category page
+
+    // Determine current category from URL filename (e.g. enfant.html -> enfant)
+    const pageName = window.location.pathname.split('/').pop().replace('.html', '');
+    if (!pageName || pageName === 'index') return;
+
+    const catalog = getStoredCatalog();
+    const items = catalog[pageName];
+    if (!items || items.length === 0) return;
+
+    const titles = getCategoryTitles();
+    const catTitle = titles[pageName] || 'Collection Toges';
+
+    let gridHtml = '';
+    items.forEach((item, i) => {
+        const srcs = item.images && item.images.length > 0 ? item.images : ['assets/toge1.jpg'];
+        const groupStr = srcs.join(',');
+
+        let imagesHtml = '';
+        srcs.forEach((src, j) => {
+            const opacity = j === 0 ? '1' : '0';
+            imagesHtml += `<img src="${src}" alt="${item.model} - ${j + 1}" loading="lazy" style="opacity:${opacity}; position: absolute; top:0; left:0; width: 100%; height: 100%; object-fit: cover; transition: opacity 0.5s ease-in-out;">\n`;
+        });
+
+        let dotsHtml = '';
+        if (srcs.length > 1) {
+            let dots = '';
+            srcs.forEach((_, j) => {
+                const bg = j === 0 ? '#000' : 'rgba(255,255,255,0.9)';
+                const border = j === 0 ? '' : 'border: 1px solid #ccc;';
+                dots += `<div style="width: 8px; height: 8px; border-radius: 50%; background: ${bg}; ${border} margin: 0 3px;"></div>`;
+            });
+            dotsHtml = `<div class="carousel-dots" style="position: absolute; bottom: 15px; width: 100%; display: flex; justify-content: center; z-index: 2;">${dots}</div>`;
+        }
+
+        gridHtml += `
+        <div class="gallery-item" data-images="${groupStr}" data-id="${item.id}" data-model="${item.model}" data-category="${catTitle}" data-price="${item.price}" style="margin-bottom: 40px; cursor: pointer;">
+            <div class="gallery-image" style="position: relative; width: 100%; padding-bottom: 125%; background: #f5f5f5; overflow: hidden;">
+                ${imagesHtml}
+                ${dotsHtml}
+                <div class="btn-favorite" style="position: absolute; top: 15px; right: 15px; z-index: 10; background: rgba(255,255,255,0.85); border: none; font-size: 20px; color: #333; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 8px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;">
+                    <i class="ph ph-heart"></i>
+                </div>
+            </div>
+            <div class="gallery-info" style="text-align: left; padding: 15px 0; display: flex; justify-content: space-between; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <div style="font-size: 0.85rem; color: #666; margin-bottom: 10px;">Couleur : <strong>Assortie</strong></div>
+                    <div style="display: inline-block; background: #9c4b8b; color: white; padding: 2px 8px; font-size: 0.75rem; font-weight: bold; margin-bottom: 10px; text-transform: uppercase;">PREMIUM</div>
+                    
+                    <h3 style="font-family: 'Oswald', sans-serif; font-size: 1.8rem; font-weight: 700; color: #111; margin: 0 0 5px 0;">${catTitle}</h3>
+                    <p style="font-size: 1.05rem; font-weight: 400; color: #666; margin-bottom: 10px;">${item.model}</p>
+                    <div class="btn-description" style="text-decoration: underline; font-size: 0.9rem; color: #555; margin-bottom: 15px; cursor: pointer;">Description détaillée</div>
+                    
+                    <div class="item-price" style="font-size: 1.4rem; font-weight: 700; color: #d00000;">${item.price}</div>
+                </div>
+                <div style="margin-left: 15px; margin-top: 55px; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                    <button class="btn-primary btn-commander" style="padding: 10px 20px; font-size: 0.9rem; border-radius: 30px; display: flex; align-items: center; gap: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.15);">
+                        <i class="ph ph-shopping-bag" style="font-size: 1.2rem;"></i>
+                        Commander
+                    </button>
+                    <div class="party-emoji" style="font-size: 1.8rem; cursor: pointer; user-select: none; transition: transform 0.2s;">🎉</div>
+                </div>
+            </div>
+            
+            <div class="expandable-section" style="display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.4s cubic-bezier(0.25, 1, 0.5, 1); overflow: hidden; background: #fbfbfb; border-radius: 12px; margin-top: 15px; box-shadow: inset 0 2px 8px rgba(0,0,0,0.05);">
+                <div class="expandable-content" style="min-height: 0; padding: 0 20px;">
+                    <div style="padding: 25px 0;">
+                        <h4 style="font-family: 'Outfit', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 15px; color: #111;">Formulaire de Commande</h4>
+                        <div class="quantity-wrapper" style="margin-bottom: 20px;">
+                            <label style="font-weight: 600; display: block; margin-bottom: 8px; font-size: 0.95rem;">Nombre de toges :</label>
+                            <input type="number" class="toga-quantity-input" min="1" max="100" value="1" style="width: 80px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; font-size: 1rem; font-weight: 600; text-align: center;">
+                        </div>
+                        <div class="toga-forms-wrapper" style="display: flex; flex-direction: column; gap: 15px;">
+                        </div>
+                        <button class="btn-primary btn-submit-whatsapp" style="width: 100%; margin-top: 25px; padding: 14px; font-size: 1rem; border-radius: 30px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(156,75,139,0.25);">
+                            <i class="ph ph-whatsapp-logo" style="font-size: 1.4rem;"></i>
+                            Commander sur WhatsApp
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        `;
+    });
+
+    categoryGrid.innerHTML = gridHtml;
+}
+
+function refreshShopPagesIfActive() {
+    renderDynamicCategoryPage();
+}
+
+// Call Admin & Dynamic Page hooks when DOM is ready
+document.addEventListener('DOMContentLoaded', () => {
+    initAdminPage();
+    renderDynamicCategoryPage();
+});
