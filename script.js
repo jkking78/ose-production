@@ -2225,14 +2225,22 @@ function initAdminPage() {
     // Delete Model
     function deleteModel(categoryKey, modelId) {
         const catalog = getStoredCatalog();
-        if (catalog[categoryKey]) {
-            catalog[categoryKey] = catalog[categoryKey].filter(m => m.id !== modelId);
-            if (catalog[categoryKey].length === 0 && !DEFAULT_CATALOG[categoryKey]) {
-                delete catalog[categoryKey]; // Remove custom category if empty
+        let found = false;
+        Object.keys(catalog).forEach(cat => {
+            const initialLen = catalog[cat].length;
+            catalog[cat] = catalog[cat].filter(m => m.id !== modelId);
+            if (catalog[cat].length !== initialLen) {
+                found = true;
             }
+            if (catalog[cat].length === 0 && !DEFAULT_CATALOG[cat]) {
+                delete catalog[cat];
+            }
+        });
+        if (found) {
             saveStoredCatalog(catalog);
             renderAdminGrid();
             refreshShopPagesIfActive();
+            syncHomePageCategoryCards();
         }
     }
 
@@ -2267,16 +2275,44 @@ function initAdminPage() {
             const catTitleName = titles[categoryKey] || title;
 
             if (editId) {
-                // Edit existing
-                const idx = catalog[categoryKey].findIndex(m => m.id === editId);
-                if (idx !== -1) {
-                    catalog[categoryKey][idx] = {
+                // Find existing model across all categories (in case category was changed)
+                let foundCat = null;
+                let foundIdx = -1;
+                Object.keys(catalog).forEach(cat => {
+                    const i = catalog[cat].findIndex(m => m.id === editId);
+                    if (i !== -1) {
+                        foundCat = cat;
+                        foundIdx = i;
+                    }
+                });
+
+                if (foundCat && foundCat !== categoryKey) {
+                    // Category was changed
+                    catalog[foundCat].splice(foundIdx, 1);
+                    catalog[categoryKey].push({
                         id: editId,
                         model: title,
                         categoryTitle: catTitleName,
                         price: price,
-                        images: currentModalImages
+                        images: [...currentModalImages]
+                    });
+                } else if (foundCat) {
+                    // Same category
+                    catalog[foundCat][foundIdx] = {
+                        id: editId,
+                        model: title,
+                        categoryTitle: catTitleName,
+                        price: price,
+                        images: [...currentModalImages]
                     };
+                } else {
+                    catalog[categoryKey].push({
+                        id: editId,
+                        model: title,
+                        categoryTitle: catTitleName,
+                        price: price,
+                        images: [...currentModalImages]
+                    });
                 }
             } else {
                 // Add new model
@@ -2286,7 +2322,7 @@ function initAdminPage() {
                     model: title,
                     categoryTitle: catTitleName,
                     price: price,
-                    images: currentModalImages
+                    images: [...currentModalImages]
                 });
             }
 
@@ -2294,6 +2330,7 @@ function initAdminPage() {
             closeModal();
             renderAdminGrid();
             refreshShopPagesIfActive();
+            syncHomePageCategoryCards();
         });
     }
 
@@ -2301,11 +2338,13 @@ function initAdminPage() {
     if (btnReset) {
         btnReset.addEventListener('click', () => {
             if (confirm('Voulez-vous réinitialiser l\'ensemble du catalogue aux modèles par défaut ?')) {
+                localStorage.removeItem('ose_catalog_data_v4');
                 localStorage.removeItem('ose_catalog_data');
                 localStorage.removeItem('ose_category_titles');
                 activeCategory = 'all';
                 renderAdminGrid();
                 refreshShopPagesIfActive();
+                syncHomePageCategoryCards();
             }
         });
     }
@@ -2313,6 +2352,58 @@ function initAdminPage() {
     // Run auth check on page load
     checkAuthentication();
 }
+
+// Function to dynamically update homepage category cards when models change or get deleted
+function syncHomePageCategoryCards() {
+    const productCards = document.querySelectorAll('.product-card[data-category]');
+    if (!productCards || productCards.length === 0) return;
+
+    const catalog = getStoredCatalog();
+    const titles = getCategoryTitles();
+
+    productCards.forEach(card => {
+        const catKey = card.getAttribute('data-category');
+        if (!catKey) return;
+
+        const items = catalog[catKey] || [];
+        const btn = card.querySelector('.btn-icon');
+        const img = card.querySelector('.product-image img');
+        const titleEl = card.querySelector('.product-title');
+        const priceEl = card.querySelector('.product-price');
+
+        if (items.length > 0) {
+            card.style.display = '';
+            // Collect all images from all items in this category
+            const allImages = [];
+            items.forEach(item => {
+                if (item.images && item.images.length > 0) {
+                    allImages.push(...item.images);
+                }
+            });
+
+            if (allImages.length > 0) {
+                if (img) {
+                    img.src = allImages[0];
+                }
+                if (btn) {
+                    btn.setAttribute('data-images', allImages.join(','));
+                }
+            }
+
+            if (titleEl && titles[catKey]) {
+                titleEl.textContent = titles[catKey];
+            }
+
+            if (priceEl && items[0].price) {
+                priceEl.textContent = `À partir de ${items[0].price}`;
+            }
+        } else {
+            // If all items of this category were deleted, hide the card
+            card.style.display = 'none';
+        }
+    });
+}
+window.syncHomePageCategoryCards = syncHomePageCategoryCards;
 
 // Function to dynamically update shop category pages when custom items exist
 function renderDynamicCategoryPage() {
@@ -2325,7 +2416,11 @@ function renderDynamicCategoryPage() {
 
     const catalog = getStoredCatalog();
     const items = catalog[pageName];
-    if (!items || items.length === 0) return;
+
+    if (!items || items.length === 0) {
+        categoryGrid.innerHTML = `<div style="grid-column: 1/-1; text-align: center; padding: 60px 20px; font-size: 1.1rem; color: #718096; background: #fff; border-radius: 16px; margin: 40px 0;">Aucun modèle disponible actuellement dans cette catégorie.</div>`;
+        return;
+    }
 
     const titles = getCategoryTitles();
     const catTitle = titles[pageName] || 'Collection Toges';
@@ -2420,4 +2515,5 @@ function refreshShopPagesIfActive() {
 document.addEventListener('DOMContentLoaded', () => {
     initAdminPage();
     renderDynamicCategoryPage();
+    syncHomePageCategoryCards();
 });
